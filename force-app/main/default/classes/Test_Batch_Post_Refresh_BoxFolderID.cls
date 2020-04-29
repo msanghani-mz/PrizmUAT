@@ -1,0 +1,176 @@
+@isTest
+public class Test_Batch_Post_Refresh_BoxFolderID {
+
+    @testSetup
+  static void createTestData()
+  {
+      try{
+      TestHelperData.createTriggerExecutionTestData();
+
+        //create custom settings
+        fsCore.SeedCustomSettings.createCustomSettings(new Set<String>{fsCore.Constants.CUSTOM_SETTING_CUSTOM_NUMBER_FORMAT
+                                                              , fsCore.Constants.CUSTOM_SETTING_CALCULATOR_PREFERENCE});
+        
+        //create company and branch
+        fsCore__Company_Setup__c testCompany = fsCore.TestHelperCompany.getTestCompanySetup('Test Company', 'TESTCO', '123456789');
+        insert testCompany;
+        System.assert(testCompany.Id != null, 'Test company created assert');        
+            
+        fsCore__Branch_Setup__c testBranch = fsCore.TestHelperCompany.getTestBranchSetup('Test Branch', 'TBRCH', testCompany.Id, null, null);
+        insert testBranch;
+        System.assert(testBranch.Id != null, 'Test branch created assert');        
+        
+        //
+        //create product
+        //
+        fsCore__Product_Setup__c testProduct = fsCore.TestHelperProduct.getTestProductSetup('Test Product'
+                                                                            , 'DNL'
+                                                                            , fsCore.Constants.PRODUCT_FAMILY_LOAN
+                                                                            , fsCore.Constants.CYCLE_MONTHLY
+                                                                            , 1);
+        insert testProduct;
+        System.assert(testProduct.Id != null, 'Test product created assert');        
+
+        //
+        //create contract template (required for PricingOfferAcceptAction)
+        //
+        fsCore__Payment_Allocation_Method_Setup__c testPaymentAlloc = fsCore.TestHelperFinancial.getTestPaymentAllocMethod('Test Payment Allocation');
+        insert testPaymentAlloc;
+
+        //create stage
+        fsCore__Stage_Setup__c testStage1 = fsCore.TestHelperWorkflow.createTestStageWithValidationRules('Application Entry'
+                                                                                        , fsCore.Constants.STAGE_TYPE_APPLICATION
+                                                                                        , fsCore.Constants.LOB_ORIGINATION
+                                                                                        , 1);
+        System.assert(testStage1.Id != null, 'Test stage 1 created assert');
+        
+        fsCore__Stage_Setup__c testStage2 = fsCore.TestHelperWorkflow.getTestStage('Underwriting'
+                                                                  , fsCore.Constants.STAGE_TYPE_APPLICATION
+                                                                  , fsCore.Constants.LOB_ORIGINATION
+                                                                  , 2);
+        testStage2.fsCore__Stage_Code__c ='DNL_DOC_PROCESSING';
+        testStage2.fsCore__Line_Of_Business__c = 'Origination';
+        testStage2.fsCore__Object_Name__c = 'fscore__lending_application__c';
+        insert testStage2;
+        System.assert(testStage2.Id != null, 'Test stage 2 created assert');
+
+
+        fsCore__Contract_Template_Setup__c testContractTemplate = fsCore.TestHelperProduct.getTestContractTemplateSetup
+                                                                                ('Test Contract Template'
+                                                                               , fsCore.Constants.PRODUCT_FAMILY_LOAN
+                                                                               , testPaymentAlloc.Id
+                                                                               , 1);
+        insert testContractTemplate;    
+        System.assert(testContractTemplate.Id != null, 'Test contract template created assert');        
+
+        //
+        //create pricing setup
+        //
+        fsCore__Pricing_Setup__c testPricing = fsCore.TestHelperProduct.getTestPricingSetup('Test Pricing'
+                                                                            , fsCore.Constants.PRICING_METHOD_INTEREST_RATE
+                                                                            , 4.00
+                                                                            , 12
+                                                                            , 1);
+        testPricing.Is_Generate_Additional_Pricing__c = true;
+        testPricing.Payment_Increase_For_Option_1__c = 10;
+        testPricing.Payment_Increase_For_Option_2__c = 20;
+        insert testPricing;
+        System.assert(testPricing.Id != null, 'Test pricing created assert');        
+
+        //Account and Contact for customer
+        Account testAccount = fsCore.TestHelperSystem.getTestAccount('Stark Corporation');
+        insert testAccount;
+        System.assert(testAccount.Id != null, 'Test Account created assert');
+
+        Contact testContact = fsCore.TestHelperSystem.getTestContact('Tony', 'Stark', testAccount.Id);
+        insert testContact;
+        System.assert(testContact.Id != null, 'Test Contact created assert');
+
+        //
+        //create Lending Application by populating company, branch, product
+        //
+        list<fsCore__Lending_Application__c> lstLendApp =new list<fsCore__Lending_Application__c>();
+        fsCore__Lending_Application__c testApplication = fsCore.TestHelperLendingApplication.getTestApplication(testCompany
+                                                                              , testBranch
+                                                                              , testProduct
+                                                                              , 'Test Application');
+        testApplication.fsCore__Primary_Customer_Account__c = testAccount.Id;
+        testApplication.fsCore__Primary_Customer_Contact__c = testContact.Id;
+        testApplication.BoxFolderId__c='123456789';
+        lstLendApp.add(testApplication);
+        insert lstLendApp;
+        System.assert(testApplication.Id != null, 'Test Lending Application created assert');        
+
+      }
+      catch(Exception e)
+     {
+         system.debug('Exception:'+e+e.getLineNumber());
+     }
+      
+  }
+    public static testmethod void Test_Batch_AppBoxFolderId() 
+    {
+       List<fsCore__Lending_Application__c> testApp = [select Id,Loan_Type__c,BoxFolderId__c,CreatedById,Loan_Officer__c,fsCore__Application_Status__c from fsCore__Lending_Application__c] ;
+       try{
+            test.startTest();
+            //string query='Select id,Name,SSN__c,Transunion_SSN__c,nu_dse__SSN__c,nu_dse__Co_SSN__c,nu_dse__Home_Phone__c,fsCore__Email__c,nu_dse__CO_Email_Address__c,nu_dse__External_GCS_ID__c,nu_dse__External_CFT_ID__c,nu_dse__External_RAMS_ID__c from Account';
+            Batch_postRefresh_ApplicationBoxFlderId b=new Batch_postRefresh_ApplicationBoxFlderId(True);
+            database.executeBatch(b);  
+            Test.stopTest();
+        }
+        catch(exception e)
+        {
+          system.debug('Acc Msg:'+e.getMessage());  
+        }
+               
+    }
+    
+    public static testmethod void Test_Batch_CheckListBoxFolderId() 
+    {
+       List<fsCore__Lending_Application__c> testApp = [select Id,Loan_Type__c,BoxFolderId__c,CreatedById,Loan_Officer__c,fsCore__Application_Status__c from fsCore__Lending_Application__c] ;
+       fsCore__Lending_Application_Checklist__c lendchklst=new fsCore__Lending_Application_Checklist__c();
+       lendchklst.BoxFolderId__c='9178865';
+       lendchklst.fsCore__Checklist_Item_Setup_ID__c='777777777777777';
+       //lendchklst.Rejection_Reason__c='The document submitted for proof of address verification does not include the name of the applicant/co-applicant. Please submit documentation in the applicant/co-applicant’s name.';
+       lendchklst.fsCore__Lending_Application_Number__c=testApp[0].id;
+       lendchklst.fsCore__Checklist_Item__c='ASFG';
+       insert lendchklst;
+        try{
+            test.startTest();
+            //string query='Select id,Name,SSN__c,Transunion_SSN__c,nu_dse__SSN__c,nu_dse__Co_SSN__c,nu_dse__Home_Phone__c,fsCore__Email__c,nu_dse__CO_Email_Address__c,nu_dse__External_GCS_ID__c,nu_dse__External_CFT_ID__c,nu_dse__External_RAMS_ID__c from Account';
+            Batch_postRefresh_checklistBoxFlderId b=new Batch_postRefresh_checklistBoxFlderId(True);
+            database.executeBatch(b);  
+            Test.stopTest();
+        }
+        catch(exception e)
+        {
+          system.debug('Acc Msg:'+e.getMessage());  
+        }
+               
+    }
+    
+    public static testmethod void Test_Batch_RootBoxFolderId() 
+    {
+       List<fsCore__Lending_Application__c> testApp = [select Id,Loan_Type__c,BoxFolderId__c,CreatedById,Loan_Officer__c,fsCore__Application_Status__c from fsCore__Lending_Application__c] ;
+       
+      
+        fsCore__Product_Setup__c testProduct = fsCore.TestHelperProduct.getTestProductSetup('Test Product1'
+                                                                            , 'TPROD1'
+                                                                            , fsCore.Constants.PRODUCT_FAMILY_LOAN
+                                                                            , fsCore.Constants.CYCLE_MONTHLY
+                                                                            , 1);
+        insert testProduct;
+        try{
+            test.startTest();
+            //string query='Select id,Name,SSN__c,Transunion_SSN__c,nu_dse__SSN__c,nu_dse__Co_SSN__c,nu_dse__Home_Phone__c,fsCore__Email__c,nu_dse__CO_Email_Address__c,nu_dse__External_GCS_ID__c,nu_dse__External_CFT_ID__c,nu_dse__External_RAMS_ID__c from Account';
+            Batch_postRefresh_RootBoxFlderId b=new Batch_postRefresh_RootBoxFlderId(True);
+            database.executeBatch(b);  
+            Test.stopTest();
+        }
+        catch(exception e)
+        {
+          system.debug('Acc Msg:'+e.getMessage());  
+        }
+               
+    }
+}

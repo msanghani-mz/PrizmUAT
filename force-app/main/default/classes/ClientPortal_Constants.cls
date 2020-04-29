@@ -1,0 +1,44 @@
+public without sharing class ClientPortal_Constants {
+    public ClientPortal_Constants(){}
+    public final static String DNL_ESIGN_PARAM = 'DNL-ESIGN';
+    public final static String DNL_TCPA_PARAM = 'DNL-TCPA';
+    public final static String DNL_CPA_PARAM = 'DNL-CPA';
+    public final static String DNL_REF_DIS_AUTH = 'DNL-REF-DIS-AUTH';
+    public final static String DNL_GEN_AGR_PAGE_URI_PARAM = 'docNameParam';
+    public final static String DNL_GEN_AGR_PAGE_PORTFOLIO_TYPE_URI_PARAM = 'portfolioType';
+    public final static String DNL_AGR_PAGE_PORTFOLIO_TYPE_REPLACE = '{{portfolioTypeName}}';
+    public final static String DNL_GENERATE_AGREEMENT_LTNG_APP = 'ClientPortal_DNLGenericAgreementApp';
+    public final static String DNL_GENERIC_AGREEMENT_CMP = 'ClientPortal_DNLGenericAgreementComponent';
+    public final static String DNL_SHOW_AGREEMENT_URI = '/apex/ClientPortal_DNLGenericShowAgrmntPage';
+    public final static String DNL_DOWNLOAD_AGREEMENT_URI = '/apex/ClientPortal_DNLGenericAgreementPage';
+    public static final String DNL_OPP_STAGE_REG_IN_PROGRESS = 'Registration In Progress';
+    public static final String DNL_PORTAL_STATUS_PERSONAL_INFO = 'Personal Information';
+    public static final String DNL_PORTAL_STATUS_ESIGN_DIS = 'Pending Notice';
+    public static final String VCL_PORTAL_STATUS_ESIGN_DIS = 'Pending Esign';
+    public static final String VCL_APPLICANT_INCOME_SCREEN_STATUS = 'Application In Progress';
+    public static final String DNL_SUMMARY_PAGE_URL = '/apex/ClientPortal_DNLHomeSummaryPage';
+    public static final String VCL_GEN_SHOW_AGREEMENT_LTNG_APP = 'ClientPortal_VCLShowDisclosureApp';
+    public static final String VCL_MLA_SHOW_AGR_LTNG_CMP = 'ClientPortal_VCLMlaAgreementComponent';
+    public static final String VCL_SHOW_MLA_URI = '/apex/ClientPortal_VCLShowDisclosurePage';
+    public static final String VCL_DOWNLOAD_MLA_URI = '/apex/ClientPortal_VCLGenMLADisclosurePage';
+    public static final String VCL_ESIGN_WITHDRAW_REASON = 'eSign';
+    public static final String VCL_TILA_WITHDRAW_REASON = 'TILA';
+    public static final String VCL_ATD_WITHDRAW_REASON = 'Not Interested';
+    public static final String LEND_APP_OBJ_NAME = 'fsCore__Lending_Application__c';
+    public static final String OPPORTUNITY_OBJ_NAME = 'Opportunity';
+    public static final String ACCOUNT_OBJ_NAME = 'Account';
+    public static final String PORTAL_REG_2FA_SOURCE = 'userRegistration';
+    public static final String PORTAL_EMAIL_FROM_ADDRESS = 'clientservice@versaralending.com';
+    public static final String VCL_ADD_INCOME_STATUS = 'Application In Progress';
+    public static final String VCL_LIST_DOCUMENT_STATUS = 'Documents In Progress';
+    public static final String VCL_ESIGN_DISCLOSURE_STATUS = 'Esign Declined';
+    public static final String VCL_ESIGN_TILA_STATUS = 'Esign Accepted';
+    public static final String VCL_VERIFY_SSN_STATUS = 'Verify SSN';
+    public static final String VCL_BAV_STATUS = 'Add Bank Account';
+    public static final String VCL_UPLOAD_DOCUMENT_STATUS = 'Uploading Documents';
+    public static final String VCL_ESIGN_DECLINED = 'Esign Declined';
+    public static final String VCL_TILA_DECLINED = 'Tila Declined';
+    public static final String VCL_BANK_ATD_DECLINED = 'ATD Declined';
+    public static final String WITHDRAWN_STATUS = 'Withdrawn';
+    public static final String VCL_PORTAL_DOCS_UPLOADED_STATUS = 'Documents Uploaded';
+}
