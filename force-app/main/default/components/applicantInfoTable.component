@@ -1,0 +1,629 @@
+<apex:component id="applicantInfoTable">
+    
+    <apex:attribute id="applicantType" name="applicantType" type="String" required="true" description="Type of the Applicant"/>
+    <apex:attribute id="applicant" name="applicant" type="DNLApplicant" required="true" description="Data Structure that provides the details of the Applicant"/>
+
+    <!-- Applicant Type -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding: 3px; border: 1px solid;">
+                    <span style="font-size: 10px;"><strong>{!applicantType}</strong></span> 
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / Applicant Type -->
+    
+    <!-- First Name, MI, Last Name -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="40%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="First Name"/>
+                </td>
+                <td width="20%" style="padding-left: 1px;">
+                    <c:formFieldLabel fieldLabel="MI"/>
+                </td>
+                <td width="40%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Last Name"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="40%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.firstName}"/>
+                </td>
+                <td width="20%" style="padding-left: 1px; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.middleNameInitial}"/>
+                </td>
+                <td width="40%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.lastName}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / First Name, MI, Last Name -->
+
+    <!-- DOB, SSN -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Date of Birth (mm/dd/yyyy)"/>
+                </td>
+                <td width="50%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Social Security #"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.dateOfBirth}"/>
+                </td>
+                <td width="50%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.socialSecurityNumber}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / DOB, SSN -->
+
+    <!-- Residency Status -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="U.S. Residency"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="100%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.residencyStatus}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / Residency Status -->
+
+    <!-- Email -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Email Address"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="100%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.emailAddress}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / Email -->
+
+    <!-- Home Address -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="70%" style="padding-left: 1px; padding-top: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <span style="font-size: 8px;"><strong>Home Address</strong></span> 
+                </td>
+                <td width="30%" style="padding-left: 1px; padding-top: 1px; border-right: 1px solid;">
+                    <span style="font-size: 8px;"><strong>Address Since Date</strong></span> 
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Street"/>
+                </td>
+                <td width="20%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Apt #"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-right: 1px solid;">
+                    <span style="font-size: 9px;">&nbsp;</span> 
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.homeAddress.street}"/>
+                </td>
+                <td width="20%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.homeAddress.addressNumber}"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.addressSinceDate}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="City"/>
+                </td>
+                <td width="20%" style="padding-left: 1px;">
+                    <c:formFieldLabel fieldLabel="State"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Zip Code"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.homeAddress.city}"/>
+                </td>
+                <td width="20%" style="padding-left: 1px; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.homeAddress.state}"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.homeAddress.zipCode}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / Home Address -->
+
+    <!-- Home, Mobile and Work Phone -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="33%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Home Phone"/>
+                </td>
+                <td width="33%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Mobile Phone"/>
+                </td>
+                <td width="34%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Work Phone"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="33%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.homePhone}"/>
+                </td>
+                <td width="33%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.mobilePhone}"/>
+                </td>
+                <td width="34%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.workPhone}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / Home, Mobile and Work Phone -->
+
+    <!-- Mailing Address -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding-left: 1px; padding-top: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <span style="font-size: 8px;"><strong>Mailing Address</strong>&nbsp;(If different)</span> 
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="70%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Street"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Apt #"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="70%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.mailingAddress.street}"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.mailingAddress.addressNumber}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="City"/>
+                </td>
+                <td width="20%" style="padding-left: 1px;">
+                    <c:formFieldLabel fieldLabel="State"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Zip Code"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.mailingAddress.city}"/>
+                </td>
+                <td width="20%" style="padding-left: 1px; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.mailingAddress.state}"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.mailingAddress.zipCode}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / Mailing Address -->
+
+    <!-- Previous Home Address -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding-left: 1px; padding-top: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <span style="font-size: 8px;"><strong>Previous Home Address</strong>&nbsp;(If less than 2 years at current home address)</span> 
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="70%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Street"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Apt #"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="70%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousHomeAddress.street}"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousHomeAddress.addressNumber}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="City"/>
+                </td>
+                <td width="20%" style="padding-left: 1px;">
+                    <c:formFieldLabel fieldLabel="State"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Zip Code"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousHomeAddress.city}"/>
+                </td>
+                <td width="20%" style="padding-left: 1px; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousHomeAddress.state}"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousHomeAddress.zipCode}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / Previous Home Address -->
+    <!-- Primary ID -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding-left: 1px; padding-top: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <span style="font-size: 8px;"><strong>Primary ID</strong></span> 
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="ID Type"/>
+                </td>
+                <td width="50%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="ID Number"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.primaryIDType}"/>
+                </td>
+                <td width="50%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.primaryIDNumber}"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Expiration Date"/>
+                </td>
+                <td width="50%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Issuing State"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.primaryIDExpiryDate}"/>
+                </td>
+                <td width="50%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.primaryIDState}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / Primary ID -->
+    <br/>
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding: 3px; border: 1px solid;">
+                    <span style="font-size: 10px;"><strong>{!applicantType}</strong></span>&nbsp;&nbsp;<span style="font-size: 8px;">(continued)</span> 
+                </td>
+            </tr>
+        </tbody>
+    </table>       
+    
+    <!-- Security Questions -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding-left: 1px; padding-bottom: 4px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;">
+                    <span style="font-size: 8px;"><strong>For Security Purpose</strong></span> 
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Mother Maiden Name"/>
+                </td>
+                <td width="50%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Your First School Attended"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.motherMaidenName}"/>
+                </td>
+                <td width="50%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.firstSchoolAttended}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / Security Questions -->
+
+    <!-- Employment -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding-left: 1px; padding-bottom: 4px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;">
+                    <span style="font-size: 8px;"><strong>Information About Your Employment</strong></span> 
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Employment Status"/>
+                </td>
+                <td width="50%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Occupation"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.employmentStatus}"/>
+                </td>
+                <td width="50%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.occupation}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="70%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Employer"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Start Date"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="70%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.currentEmployment.employerName}"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.currentEmployment.startDate}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding-left: 1px; border-left: 1px solid;border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Street Address"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="100%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.currentEmployment.streetAddress}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="City"/>
+                </td>
+                <td width="20%" style="padding-left: 1px;">
+                    <c:formFieldLabel fieldLabel="State"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Zip Code"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.currentEmployment.city}"/>
+                </td>
+                <td width="20%" style="padding-left: 1px; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.currentEmployment.state}"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.currentEmployment.zipCode}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <!-- / Employment -->
+
+    <!-- Previous Employment -->
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding-left: 1px; padding-bottom: 4px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;">
+                    <span style="font-size: 8px;"><strong>If less than 1 year with the current employer</strong></span> 
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="70%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Previous Employer"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Start Date"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="70%" style="padding-left: 1px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousEmployment.employerName}"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousEmployment.startDate}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="100%" style="padding-left: 1px; border-left: 1px solid;border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Street Address"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="100%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousEmployment.streetAddress}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>    
+    <table width="100%" cellspacing="0">
+        <tbody>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid;">
+                    <c:formFieldLabel fieldLabel="City"/>
+                </td>
+                <td width="20%" style="padding-left: 1px;">
+                    <c:formFieldLabel fieldLabel="State"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-right: 1px solid;">
+                    <c:formFieldLabel fieldLabel="Zip Code"/>
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousEmployment.city}"/>
+                </td>
+                <td width="20%" style="padding-left: 1px; border-bottom: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousEmployment.state}"/>
+                </td>
+                <td width="30%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                    <c:formFieldValue fieldValue="{!applicant.previousEmployment.zipCode}"/>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- / Previous Employment -->
+
+    <!-- Income Information -->
+    
+    <div style="padding-top:2px !important;">
+        <table width="100%" cellspacing="0">
+            <tbody>
+                <tr>
+                    <td width="100%" style="padding: 3px; border: 1px solid;">
+                        <span style="font-size: 10px;"><strong>Income Information</strong></span> 
+                    </td>
+                </tr>
+            </tbody>
+        </table>    
+        <table width="100%" cellspacing="0">
+            <tbody>
+                <tr>
+                    <td width="65%" style="padding-left: 1px; padding-bottom: 4px; border-left: 1px solid; border-bottom: 1px solid;">
+                        <c:formFieldLabel fieldLabel="Annual Base Salary"/>
+                    </td>
+                    <td width="35%" style="padding-left: 1px; padding-bottom: 4px; border-bottom: 1px solid; border-right: 1px solid;">
+                        <c:formFieldValue fieldValue="{!IF(ISBLANK(applicant.annualBaseSalary), '', ('$' + applicant.annualBaseSalary))}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="65%" style="padding-left: 1px; padding-bottom: 4px; border-left: 1px solid; border-bottom: 1px solid;">
+                        <c:formFieldLabel fieldLabel="Other Annual Income"/><span style="font-size:9px;"><sup>1</sup></span>
+                    </td>
+                    <td width="35%" style="padding-left: 1px; padding-bottom: 4px; border-bottom: 1px solid; border-right: 1px solid;">
+                        <c:formFieldValue fieldValue="{!IF(ISBLANK(applicant.otherAnnualIncome1), '', ('$' + applicant.otherAnnualIncome1))}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="65%" style="padding-left: 1px; padding-bottom: 4px; border-left: 1px solid; border-bottom: 1px solid;">
+                        <c:formFieldLabel fieldLabel="Source of Other Income"/>
+                    </td>
+                    <td width="35%" style="padding-left: 1px; padding-bottom: 4px; border-bottom: 1px solid; border-right: 1px solid;">
+                        <c:formFieldValue fieldValue="{!applicant.otherIncomeSource1}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="65%" style="padding-left: 1px; padding-bottom: 4px; border-left: 1px solid; border-bottom: 1px solid;">
+                        <c:formFieldLabel fieldLabel="Residence Status"/>
+                    </td>
+                    <td width="35%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                        <c:formFieldValue fieldValue="{!applicant.residencyStatus}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="65%" style="padding-left: 1px; border-left: 1px solid; border-bottom: 1px solid;">
+                        <c:formFieldLabel fieldLabel="Monthly Rent or Mortgage Payment"/><br/>
+                        <c:formFieldLabel fieldLabel="(include maintenance/taxes/insurance)"/>
+                    </td>
+                    <td width="35%" style="padding-left: 1px; border-bottom: 1px solid; border-right: 1px solid;">
+                        <c:formFieldValue fieldValue="{!IF(ISBLANK(applicant.monthlyPayment), '', ('$' + applicant.monthlyPayment))}"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>  
+    </div>  
+    <!-- / Income Information -->
+    
+</apex:component>

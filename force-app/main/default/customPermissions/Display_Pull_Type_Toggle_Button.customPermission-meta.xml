@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomPermission xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Permission to display the Pull Type toggle button on Pull Credit UI component.</description>
+    <label>Display Pull Type Toggle Button</label>
+</CustomPermission>

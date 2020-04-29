@@ -1,0 +1,7 @@
+<apex:component >
+    
+    <apex:attribute id="fieldValue" name="fieldValue" type="String" required="true" description="Field Label"/>
+    
+    <span style="font-size: 9px;">&nbsp;{!fieldValue}</span>
+    
+</apex:component>
