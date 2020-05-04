@@ -1,0 +1,42 @@
+<apex:page id="boxAttachmentsContractApp" standardController="fsServ__Lending_Contract__c" 
+           extensions="BoxAttachmentsContractAppController" tabStyle="fsServ__Lending_Contract__c" 
+           title="{!mContract.Name} : {!$ObjectType.fsServ__Lending_Contract__c.Label}"
+           action="{!getAccessToken}" >  
+
+<html lang="en-US">
+<head>
+    <meta charset="utf-8" />
+    <title>Documents Library</title>
+
+    <!-- polyfill.io only loads the polyfills your browser needs -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=es6,Intl"></script>
+
+    <!-- Latest version of the explorer css for your locale -->
+    <link rel="stylesheet" href="https://cdn01.boxcdn.net/platform/elements/11.0.2/en-US/explorer.css" />
+</head>
+        
+<body>
+    
+    <div class="container" style="height:600px"></div>
+    <!-- Latest version of the explorer js for your locale -->
+    <script src="https://cdn01.boxcdn.net/platform/elements/11.0.2/en-US/explorer.js"></script>
+    <script>
+        var accessToken = '{!mAccessToken}';
+        uploadBoxFile();
+        function uploadBoxFile(){
+            var folderId ='{!mContract.Lending_Application_BoxFolderId__c}'; 
+            var contentExplorer = new Box.ContentExplorer();
+            contentExplorer.show(folderId, accessToken, {
+                mode: 'no-cors',container: '.container', canShare: false,canDownload: true,sortBy:'name', canSetShareAccess: false,logoUrl:'box', canRename: false,canDelete: false ,canPreview:true, contentPreviewProps: {  contentOpenWithProps: { show: true }}
+            });
+            
+        }
+    </script>
+    
+</body>
+</html>
+<!-- On request PDI-459 made the change to change the color of button-->
+<style>
+    .buik-btn.buik-btn-primary {background-color: #fff; color: #333}  
+</style>
+</apex:page>

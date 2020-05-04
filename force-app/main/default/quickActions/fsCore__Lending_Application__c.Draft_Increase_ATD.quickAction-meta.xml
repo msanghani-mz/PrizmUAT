@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldOverrides>
+        <field>fsCore__Due_Datetime__c</field>
+        <formula>NOW()</formula>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>fsCore__Severity__c</field>
+        <literalValue>Medium</literalValue>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>fsCore__Status__c</field>
+        <literalValue>Open</literalValue>
+    </fieldOverrides>
+    <label>Draft Increase ATD</label>
+    <optionsCreateFeedItem>true</optionsCreateFeedItem>
+    <quickActionLayout>
+        <layoutSectionStyle>TwoColumnsLeftToRight</layoutSectionStyle>
+        <quickActionLayoutColumns>
+            <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
+                <field>fsCore__Status__c</field>
+                <uiBehavior>Required</uiBehavior>
+            </quickActionLayoutItems>
+            <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
+                <field>Requested_Payment_Amount__c</field>
+                <uiBehavior>Required</uiBehavior>
+            </quickActionLayoutItems>
+            <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
+                <field>Requested_Payment_Frequency__c</field>
+                <uiBehavior>Required</uiBehavior>
+            </quickActionLayoutItems>
+        </quickActionLayoutColumns>
+        <quickActionLayoutColumns/>
+    </quickActionLayout>
+    <targetObject>fsCore__Assignment__c</targetObject>
+    <targetParentField>fsCore__Lending_Application_Number__c</targetParentField>
+    <targetRecordType>fsCore__Assignment__c.Draft_Increase_Request</targetRecordType>
+    <type>Create</type>
+</QuickAction>

@@ -1,0 +1,76 @@
+<apex:page controller="ClientPortal_DNLGenericAgrmntPageCntrl" showHeader="false" sidebar="false">
+    <apex:includeLightning />
+    <html>
+        <head>
+            <script>
+            var appName = '{!componentAppName}';
+            var cmpName = '{!componentName}';
+            var showEsignBool = '{!showEsign}';
+            var showCPABool = '{!showCpa}';
+            var showTcpaBool = '{!showTcpa}';
+            var showRefDisAuthBool = '{!showRefDisAuth}';
+            var applicants = '{!applicantsNameString}';
+            var value = '';
+            var portfolio = '{!portfolioName}';      
+            var todayDate = '{!currentDate}';
+            if(showEsignBool === 'true'){
+                value = '{!portfolio.ESign_Content__c}';
+            }else if(showCPABool === 'true'){
+                value = '{!portfolio.CPA_Content__c}';
+            }else if(showTcpaBool === 'true'){
+                value = '{!portfolio.TCPA_Content__c}';
+            }else if(showRefDisAuthBool === 'true'){
+                value = '{!portfolio.RDA_Content__c}';
+            }
+            if(appName && cmpName){
+                console.log('creating component');
+                $Lightning.use(appName, function(){
+                    $Lightning.createComponent(cmpName,
+                                               {
+                                                   bodyContent             : value,
+                                                   applicantNames          : applicants,
+                                                   today                   : todayDate
+                                               },
+                                               "showComponent",
+                                               function(component) {
+                                                   // create component Callback, Lightning Component has been Created,
+                                                   // Now you can set more lightning Component attributes here,
+                                                   // and do more cool stuff here
+                                                   console.log('component created');
+                                                   document.getElementById('spinner').style.display = 'none';
+                                               });
+                });
+            }
+            </script>
+            <style type="text/css">
+                #showComponent{
+                padding: 2rem;
+                text-align: justify; 
+                color: #000000 ;
+                background-color: #ffffff ;
+                border: 2px solid red;
+                font-size: 15px;
+                }
+                body{
+                background-color: #696969;
+                padding: 5%; 
+                }
+                p{
+                line-height: 1.25;
+                }
+                
+            </style>
+        </head>
+        <body>
+            <div id="spinner">
+                <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.75; z-index: 1000; background-color: #696969;">
+                    &nbsp;
+                </div>
+                <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 30% 50%">
+                    <img src="/img/loading32.gif" width="25" height="25" />
+                </div>
+            </div>
+            <div id="showComponent"></div>
+        </body>
+    </html>
+</apex:page>

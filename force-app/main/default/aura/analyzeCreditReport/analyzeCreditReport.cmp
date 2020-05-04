@@ -1,0 +1,42 @@
+<aura:component access="global" controller="CreditAnalysisController" implements="force:lightningQuickActionWithoutHeader,force:hasRecordId">
+
+    <aura:attribute name="reportInfo" type="Object"/>
+    <aura:attribute name="showMessage" type="Boolean" default="false"/>
+    <aura:attribute name="iconName" type="String"/>
+    <aura:attribute name="iconVariant" type="String"/>
+    <aura:attribute name="messageText" type="String"/>
+    <aura:attribute name="showConfirmButton" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit }"/>
+
+    <div aura:id="spinner" class="slds-hide">
+         <lightning:spinner alternativeText="{!$Label.fsCore.Loading_Text}" variant="brand" size="medium"/>
+    </div>
+
+    <header aura:id="headerSection" class="cmp-header">
+        <h2 class="slds-text-heading_medium slds-hyphenate">{!$Label.c.Analyze_Credit_Report_Action_Title}</h2>
+    </header>
+    
+    <div aura:id="contentSection" class="c-container slds-p-around_medium ">
+        <aura:if isTrue="{!v.showMessage}">
+            <fsCore:messageWithIcon iconName="{!v.iconName}" iconVariant="{!v.iconVariant}" messageText="{!v.messageText}"/>
+            
+            <aura:set attribute="else">
+                <div class="slds-scrollable_y slds-grid slds-grid_vertical-align-center" style="max-height:96px; height:96px;">
+                    <div class="slds-align_absolute-center">
+                        <ui:outputText class="slds-text-body_regular slds-text-color_weak" 
+                                       value="{!v.messageText}"/>
+                    </div>
+                </div>
+            </aura:set>
+        </aura:if>
+    </div>
+    
+    <footer aura:id="footerSection" class="cmp-footer">
+        <lightning:button label="{!$Label.c.Cancel_Button}" onclick="{!c.doCancel}"/>
+        <aura:if isTrue="{!v.showConfirmButton}">
+            <lightning:button variant="brand" label="{!$Label.c.Confirm_Button}" onclick="{!c.doAnalyze}"/>
+        </aura:if>
+    </footer>
+
+</aura:component>

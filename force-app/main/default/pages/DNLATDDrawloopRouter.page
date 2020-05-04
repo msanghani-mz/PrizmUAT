@@ -1,0 +1,19 @@
+<!--
+  @File Name          : DNLATDDrawloopRouter.page
+  @Description        : 
+  @Author             : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Group              : 
+  @Last Modified By   : ChangeMeIn@UserSettingsUnder.SFDoc
+  @Last Modified On   : 9/28/2019, 3:05:34 PM
+  @Modification Log   : 
+  Ver       Date            Author      		    Modification
+  1.0    9/28/2019   ChangeMeIn@UserSettingsUnder.SFDoc     Initial Version
+-->
+<apex:page id="DNLATDDrawloopRouter" standardController="fsCore__Assignment__c" 
+           extensions="DNLATDDrawloopRouterController" tabStyle="fsCore__Assignment__c"
+           standardStylesheets="true" lightningStylesheets="true"
+           showHeader="false" sidebar="false" applyHtmlTag="false"
+           action="{!redirectToDrawloopPage}"
+           title="DNL ACH/ATD Doc Gen" docType="html-5.0">     
+
+</apex:page>

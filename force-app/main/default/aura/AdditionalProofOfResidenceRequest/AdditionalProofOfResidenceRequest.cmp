@@ -1,0 +1,42 @@
+<aura:component implements="force:hasRecordId,force:lightningQuickActionWithoutHeader" controller="AdditionalProofOfResidenceRequest" access="global" >
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" /> 
+    
+    <aura:attribute access="private" name="customers" type="fsCore__Lending_Application_Customer__c[]"/>
+    <aura:attribute access="private" name="customerTableColumns" type="List"/>
+    
+    <aura:attribute access="private" name="disableSendMailButton" type="Boolean" default="true"/>
+
+
+    <div aura:id="spinner" class="slds-hide">
+        <lightning:spinner alternativeText="{!$Label.fsCore.Loading_Text}" variant="brand" size="medium"/>
+    </div>
+
+    <header aura:id="headerSection" class="cmp-header c-container slds-align_absolute-center" >
+        <h2 class="slds-text-heading_medium slds-hyphenate">Request Additional Proof Of Residence</h2>
+    </header>    
+    
+    <div aura:id="contentSection" class="slds-align_absolute-center" style="max-height:170px;height:272px">
+        <div class="c-container slds-p-around_medium ">
+            <lightning:layout multipleRows="true">
+                <lightning:layoutItem size="12">
+                    <div class="slds-m-vertical_small">
+                        <lightning:datatable aura:id="customerTable" data="{!v.customers}" 
+                                             columns="{!v.customerTableColumns}" keyField="id" 
+                                             onrowselection="{!c.onTableRowSelection}"/>
+                    </div>
+                </lightning:layoutItem>
+                
+            </lightning:layout>
+        </div>
+    </div>
+    
+    <footer aura:id="footerSection" class="cmp-footer slds-align_absolute-center">
+        <lightning:button label="Cancel" onclick="{!c.doCancel}"/>
+        <lightning:button variant="brand" label="Request Additional Proof" onclick="{!c.doRequestAdditionalProof}" disabled="{!v.disableSendMailButton}"/>
+    </footer>
+ <aura:html tag="style">     
+     .slds-modal__content{  
+       overflow-y: hidden !important;  
+     } 
+ </aura:html>    
+</aura:component>

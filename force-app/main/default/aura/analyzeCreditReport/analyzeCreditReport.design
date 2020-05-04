@@ -1,0 +1,5 @@
+<design:component label="Analyze Credit Report">
+    <sfdc:objects>
+        <sfdc:object>fsCore__Lending_Application__c</sfdc:object>
+    </sfdc:objects>
+</design:component>

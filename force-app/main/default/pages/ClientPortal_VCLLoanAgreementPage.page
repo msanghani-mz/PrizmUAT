@@ -1,0 +1,458 @@
+<apex:page renderAs="pdf"  controller="ClientPortal_VCLLoanAgreementPageCntrl"
+           applyHtmlTag="false" 
+           showHeader="false" 
+           cache="true"
+           readOnly="true">
+    <html>
+        
+        <head>
+            <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+            <style type="text/css">
+                @page {
+                    size:A4 portrait;
+                    border: 2px solid red;    
+                    @bottom-center {
+                        font-family:sans-serif;
+                        font-size:80%;
+                        content: "Page " counter(page)  " of " counter(pages);
+                    }
+                }
+                
+                table, td, th {
+                border: 1px solid black;
+                line-height: 1.25;
+                padding: 10px;
+                }
+                
+                p{
+                line-height: 1.25;
+                }
+                
+            </style>
+        </head>
+        <body >
+            <br/>
+            <div style="font-size: 20px;text-align: center;">
+                <strong>Versara Consolidation Loan Agreement</strong>
+            </div><br/>
+            <div>
+                <p>
+                    The following terms constitute a binding agreement (the "Agreement") between you and Versara Lending, LLC (“Versara”).  The terms "we," "us" and “our” refer to Versara and its successors or assigns as appropriate. 
+                    <strong>BY ELECTRONICALLY SIGNING THE AGREEMENT, YOU HAVE SIGNIFIED YOUR AGREEMENT TO BE BOUND BY ALL OF THE TERMS AND CONDITIONS CONTAINED IN THIS AGREEMENT. </strong>
+                    Under this Agreement, you agree to receive and repay one or more installment loans from us. These terms affect your rights and you should read them carefully and print a copy for your records. Your agreement to these terms means you agree to borrow and repay the money under the terms of this Agreement, agree to transact with us electronically, and agree to have any dispute with us resolved by binding arbitration.
+                </p>
+            </div>
+            <div>
+                <p>
+                    <strong>1. Loan Terms. </strong>Your loan will have a principal balance between Five Thousand Dollars ($5,000.00) and Thirty-Five Thousand Dollars ($35,000.00) in the specific amount set forth in the disclosures provided to you by Versara. All loans are unsecured, fully-amortizing, closed-end loans with a three (3) year term. Your obligations, including your obligation to repay principal and interest, are set forth in this Agreement and in the Note or Notes that you will make to us, as described in section 3 below.
+                </p>
+            </div>
+            <div>
+                <p>
+                    <strong>2. Credit Decisions. </strong>Your loan request must include your annual income and such other information as we may require. We will consider public assistance, alimony, child support, or separate maintenance income as income if you choose to include such sources of income in your application and such income is likely to continue. We reserve the right to verify any information you submit by requiring you to produce appropriate documentation or other proof, and also reserve the right to conduct such verification through a third party. You hereby authorize us to request and obtain data from a third party to verify any information you provide to us in connection with your loan request. We may terminate consideration of your application at any time in our sole discretion.
+                </p>
+            </div>
+            <div>
+                <p>
+                    <strong>3. Loan Funding and Closing. </strong>Your loan will close and issue, unless you notify us in writing of your election to terminate your loan request sufficiently far in advance of the loan closing for us to cancel the loan.
+                </p>
+            </div>
+            <div>
+                <p>
+                    If we extend a loan to you, you agree to execute and be bound by the terms set forth in the form of promissory note attached as Exhibit A (the "Note") as to your loan. You authorize us to disburse the loan proceeds by Automated Clearing House ("ACH") transfer to your designated account. BY COMPLETING YOUR APPLICATION AND SUBMITTING YOUR LOAN REQUEST, YOU ARE COMMITTING TO OBTAIN A LOAN FROM US IN THE AMOUNT AND ON THE TERMS SET FORTH IN YOUR AGREEMENTS WITH US AND THE DISCLOSURES PROVIDED TO YOU IN CONNECTION WITH YOUR REQUEST. YOU HAVE NO RIGHT TO RESCIND THE LOAN ONCE MADE BUT YOU MAY PREPAY THE LOAN AT ANY TIME WITHOUT PENALTY.
+                </p>
+            </div>
+            <div>
+                <p>
+                   <strong>4. Making Your Loan Payments. </strong> You agree to make all regularly scheduled monthly loan payments by either check or automatic withdrawal from your designated account. Any fees authorized to be charged on your loan may be collected using electronic funds transfers initiated by us from your designated account. If such fees are assessed on your account by us, those fees will be debited separately from your monthly payment amount. If you elect to make payments by recurring automatic withdrawal, you authorize us and our successors and assigns to debit your designated account by ACH transfer for the amount of each payment due on each due date. You may elect to make payments by personal check by contacting Versara at support@versaralending.com, or by regular mail to: Versara Lending, LLC, 711 3rd Avenue, 6th Floor, New York, NY 10017, Attention: Operations. This authorization does not affect your obligation to pay when due all amounts payable on your loan, whether or not there are sufficient funds therefore in such accounts. The foregoing authorization is in addition to, and not in limitation of, any rights of setoff we may have. With regard to payments made by automatic withdrawal, you have the right to stop payment of automatic withdrawals or revoke your prior authorization for automatic withdrawals by notifying your financial institution at least three (3) banking days before the scheduled date of transfer. You must notify us of the exercise of your right to stop a payment or revoke your authorization for automatic withdrawals at least 3 banking days before the scheduled date of transfer. All payments are to be applied first to the payment of all fees, expenses and other amounts due (excluding principal and interest), then to accrued interest, and then the balance on account of outstanding principal; provided, however, that after an Event of Default (as defined below), payments will be applied to your obligations as we determine in our sole discretion. 
+                </p>
+            </div>
+            <div>
+                <p>
+                   <strong>5. Other Borrower Obligations. </strong> You agree that you will not, in connection with your loan request: (i) make any false, misleading or deceptive statements or omissions of fact in your listing; (ii) misrepresent your identity, or describe, present or portray yourself as a person other than yourself; (iii) give to or receive from, or offer or agree to give to or receive from any Versara member or other person any fee, bonus, additional interest, kickback or thing of value of any kind except in accordance with the terms of your loan; (iv) represent yourself to any person, as a representative, employee, or agent of ours, or purport to speak to any person on our behalf; or (v) provide, in your loan request or in communications related to your loan request, information upon which a discriminatory lending decision may be made, such as your race, color, religion, national origin, sex, or age. You acknowledge and agree that we may rely without independent verification on the accuracy, authenticity, and completeness of all information you provide to us. You certify that you are a resident of the United States and the proceeds of the loan will not be used for the purpose of purchasing or carrying any securities or to fund any illegal activity.
+                </p>
+            </div>
+            <div>
+                <p>
+                   <strong>6. Fees. <u>A non-refundable origination fee paid by you under this Agreement will be deducted from your loan proceeds, so the loan proceeds delivered to you will be less than the face amount of your loan request</u>. </strong> You acknowledge that the origination fee will be considered part of the principal on your loan and is subject to the accrual of interest. In addition to the other fees set forth in this Agreement.  These fees may be collected using ACH transfers initiated by us from your designated account. Any such late fee assessed is immediately due and payable. Any payment received after 6:00 P.M. E.T. on a banking day is deemed received on the next succeeding banking day.
+                </p>
+            </div>
+            <div>
+                <p>
+                   <strong>7. Default and Termination. </strong>You will be deemed in default on your loan (each, an "Event of Default") if you: (1) fail to pay timely any amount due on your loan; (2) file or have instituted against you any bankruptcy or insolvency proceedings or make any assignment for the benefit of creditors; (3) die or are declared dead; (4) commit fraud or make any material misrepresentation in this Agreement, the Note, or any other documents, applications or related materials delivered to us in connection with your loan; or (5) fail to abide by the terms of this Agreement. Upon the occurrence of an Event of Default, we may exercise all remedies available to us under applicable law, this Agreement, and the Note, including without limitation (1) demand that you immediately pay all amounts owed on your loan or (2) terminate this Agreement. Any loans you obtain prior to the effective date of termination shall remain in full force and effect in accordance with their terms.
+                </p>
+            </div>
+            <div>
+                <p>
+                   <strong>8. Collection &amp; Reporting of Delinquent Loans. </strong>We reserve the right to report loan payment delinquencies at or in excess of Thirty (30) days to one or more consumer reporting agencies in accordance with applicable law.
+                </p>
+            </div>
+            <div>
+                <p>
+                   <strong>9. TCPA Consent &amp; Privacy: </strong>You expressly consent to receiving calls and messages, including autodialed and prerecorded message calls and SMS messages (including text messages) from us, our affiliates, marketing partners, agents and others calling at their request or on their behalf, at any telephone numbers that you have provided or may provide in the future (including any cellular telephone numbers). Your cellular or mobile telephone provider will charge you according to the type of plan you carry. You also agree that we may contact you by email, using any email address you have provided to us or that you provide to us in the future. We may listen to and/or record phone calls between you and our representatives without notice to you as permitted by applicable law. For example, we listen to and record calls for quality monitoring purposes.
+                </p>
+            </div>
+            <div>
+                <p>
+                   <strong>10. Assignment of Your Loan. </strong>Following the closing of your loan, you hereby agree that we may, without notice to you, assign all of our right, title and interest in this Agreement and/or your Note.
+                </p>
+            </div>
+            <div>
+                <p>
+                    <strong>11. NO GUARANTEE. </strong>WE DO NOT WARRANT OR GUARANTEE (1) THAT YOUR LOAN REQUEST WILL BE FUNDED, OR (2) THAT YOU WILL RECEIVE A LOAN AS A RESULT OF YOUR REQUEST(S). 
+                </p>
+            </div>
+            <div>
+                <p>
+                    <strong>12. Entire Agreement. </strong>This Agreement and any Note represents the entire agreement between you and us regarding the subject matter hereof and supersedes all prior or contemporaneous communications, promises and proposals, whether oral, written or electronic, between us with respect to your loan request and loan. The Privacy Notice attached as Exhibit B is incorporated by reference into this Agreement.
+                </p>
+            </div>
+            <div>
+                <p>
+                    <strong>13. Notices. </strong>All notices and other communications to you hereunder may be given by email to the email address you provided, and shall be deemed to have been duly given and effective upon transmission. You acknowledge that you have sole access to such email account and that communications from us may contain sensitive, confidential, and collections-related communications. If your email address changes, you must notify us of the change by sending an email to
+                    <a href="support@versaralending.com" >support@versaralending.com </a>or calling 1-800-338-8049. You also agree to update your residence address and telephone number if they change.
+                </p>
+            </div>
+            <div>
+                <p>
+                    <strong>14. NO WARRANTIES. </strong>EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, WE MAKE NO REPRESENTATIONS OR WARRANTIES TO YOU, INCLUDING, BUT NOT LIMITED TO, ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+                </p>
+            </div>
+            <div>
+                <p>
+                    <strong>15. LIMITATION ON LIABILITY. </strong>IN NO EVENT SHALL WE BE LIABLE TO YOU FOR ANY LOST PROFITS OR SPECIAL, EXEMPLARY, CONSEQUENTIAL OR PUNITIVE DAMAGES, EVEN IF INFORMED OF THE POSSIBILITY OF SUCH DAMAGES. FURTHERMORE, WE MAKE NO REPRESENTATION OR WARRANTY TO YOU REGARDING THE EFFECT THAT THE AGREEMENT MAY HAVE UPON YOUR FOREIGN, FEDERAL, STATE OR LOCAL TAX LIABILITY.
+                </p>
+            </div>
+            <div>
+                <p>
+                    <strong>16. Miscellaneous. </strong>You may not assign, transfer, sublicense or otherwise delegate your rights or obligations under this Agreement to another person without our prior written consent. Any such assignment, transfer, sublicense or delegation in violation of this section 16 shall be null and void. The provisions of this Agreement will be governed by federal laws and the laws of the state of Utah to the extent not preempted, without regard to any principle of conflicts of laws that would require or permit the application of the laws of any other jurisdiction. Any waiver of a breach of any provision of this Agreement will not be a waiver of any other subsequent breach. Failure or delay by either party to enforce any term or condition of this Agreement will not constitute a waiver of such term or condition. If at any time after the date of this Agreement, any of the provisions of this Agreement shall be held by any court of competent jurisdiction to be illegal, void or unenforceable, such provision shall be of no force and effect, but the illegality and unenforceability of such provision shall have no effect upon and shall not impair the enforceability of any other provisions of this Agreement. The headings in this Agreement are for reference purposes only and shall not affect the interpretation of this Agreement in any way.
+                </p>
+            </div>
+            <div style="text-align: center;">
+                <p><strong>Exhibit A</strong></p>
+            </div>
+            <div>
+                <strong>NON-NEGOTIABLE PROMISSORY NOTE</strong>
+                <p>
+                    <span>Borrower name and address: </span> <span style="background-color:#d3d3d3;">______________________________________________ $_______________</span>
+                </p>
+                <p>
+                    <span style="background-color:#d3d3d3;">_____________, 20__</span>
+                </p>
+                <p>
+                    For value received, I ("Borrower") promise to pay to the order of Versara Lending, LLC or any subsequent holder ("Lender" "you" or "your") of this Promissory Note (the "Note") the principal sum of 
+                    <span style="background-color:#d3d3d3;">________________ </span>($ <span style="background-color:#d3d3d3;">_________</span>
+                    ) Dollars with interest as set forth below. I intend to be legally bound by this Note. I have read, understood, and agreed to all of the terms of this Note.
+                </p>
+                <p>
+                    <strong><u>Interest.</u> </strong>This Note bears interest during each calendar month from the date hereof until paid, at a fixed rate of 
+                    <span style="background-color:#d3d3d3;">______ </span>
+                    (%). Interest is calculated on a monthly basis upon the unpaid balance with each payment representing 1/12th of a year.
+                </p>
+                <p>
+                    <strong><u>Payments.</u> </strong>Principal and interest is to be paid during and throughout the period of
+                    <span style="background-color:#d3d3d3;">________</span> months in the following manner:
+                </p>
+                <p>
+                    Payments of principal and interest in the amount of 
+                    <span style="background-color:#d3d3d3;">________________ </span>($ <span style="background-color:#d3d3d3;">_________</span>
+                    ) Dollars are to be made by the Borrower to the Lender commencing 
+                    <span style="background-color:#d3d3d3;">_____________, 20__</span>
+                    , and on the same day of each successive month thereafter until
+                    <span style="background-color:#d3d3d3;">_____________, 20__</span>
+                    when the full amount of unpaid principal, together with unpaid accrued interest is due and payable. If any monthly payment to be made by the Borrower shall become due on a day which is not a Business Day, such payment shall be made on the next succeeding Business Day. Business Day shall mean any day that both the Lender and the depository institution the Lender utilizes for funds transfers hereunder are open for business. If the monthly anniversary is on the 29th, 30th, or 31st of the month, and the following month does not have a 29th, 30th, or 31st day, the monthly payment will be due on the last day of the month in which the payment was due. The last payment might be of a slightly different amount to adjust for rounding.
+                </p>
+                <p>
+                  All payments on this Note are to be made in immediately available lawful money of the United States. Borrower shall make all regularly scheduled monthly loan payments by either check or automatic withdrawal from Borrower’s designated account. Any fees authorized to be charged on Borrower’s loan may be collected using electronic funds transfers initiated by Lender from Borrower’s designated account. If such fees are assessed on Borrower’s account by Lender, those fees will be debited separately from Borrower’s monthly payment amount. If Borrower elects to make payments by recurring automatic withdrawal, Borrower authorizes Lender to debit Borrower's designated account by Automated Clearing House ("ACH") transfer for the amount of each payment due on each due date. Borrower may elect to make payments by personal check by contacting support@versaralending.com, or by regular mail to: Versara Lending, LLC, 711 3rd Avenue, 6th floor, New York, NY 10017, Attention: Loan Processing Department. This authorization does not affect Borrower's obligations to pay when due all amounts payable under this Note, whether or not there are sufficient funds therefore in such accounts. The foregoing authorization is in addition to, and not in limitation of, any rights of setoff Lender may have. With regard to payments made by automatic withdrawal, Borrower has the right to stop payment of automatic withdrawals or revoke Borrower's prior authorization for automatic withdrawals by notifying Borrower's financial institution at least three (3) banking days before the scheduled date of transfer. Borrower will notify Lender of the exercise of Borrower's right to stop a payment or revoke Borrower's authorization for automatic withdrawals at least three (3) banking days before the scheduled date of transfer. All payments are to be applied first to the payment of all fees, expenses and other amounts due to Lender (excluding principal and interest), then to accrued interest, and the balance on account of outstanding principal; provided, however, that after an Event of Default (as defined below), payments will be applied to Borrower's obligations as Lender determines in his sole discretion. Borrower may elect to change Borrower’s designated payment method at any time.  
+                </p>
+                <p>
+                    <strong><u>Fees and Charges.</u> </strong>A non-refundable origination fee paid by Borrower, in the amount and on the terms set forth in Borrower's Loan Agreement, will be deducted from Borrower's loan proceeds, so the loan proceeds delivered to Borrower will be less than the face amount of Borrower's loan request. Borrower acknowledges that the origination fee will be considered part of the principal of Borrower's loan and is subject to the accrual of interest. These fees may be collected using ACH transfers initiated by you from Borrower's designated account. Any such late fee assessed is immediately due and payable. Any payment received after 6:00 P.M. Eastern Standard Time (EST) on a banking day is deemed received on the next succeeding banking day.
+                </p>
+                <p>
+                    <strong><u>Prepayments and Partial Payments.</u> </strong>Borrower may make any payment early, in whole or in part, without penalty or premium at any time. Any partial prepayment is to be applied against the principal amount outstanding and does not postpone the due date of any subsequent monthly installments, unless you otherwise agree in writing. If Borrower prepays this Note in part, Borrower agrees to continue to make regularly scheduled payments until all amounts due under this Note are paid. You may accept late payments or partial payments, even though marked "paid in full", without losing any rights under this Note.
+                </p>
+                <p>
+                    <strong><u>Use of Funds.</u> </strong>Borrower certifies that Borrower is a resident of the United States and the proceeds of the loan will not be used for the purpose of purchasing or carrying any securities or to fund any illegal activity. 
+                </p>
+                <p>
+                    <strong><u>Default.</u> </strong>Borrower will be deemed in default (each, an "Event of Default") of Borrower's obligations under this Note if Borrower: (i) fails to pay timely any amount due under this Note; (ii) files or has instituted against Borrower any bankruptcy or insolvency proceedings or makes any assignment for the benefit of creditors; (iii) dies; (iv) commits fraud or makes any material misrepresentation in this Note; or (v) fails to abide by the terms of this Note. Upon the occurrence of an Event of Default, you may exercise all remedies available to you under applicable law, including demand upon Borrower to immediately pay all amounts due under this Note. You reserve the right to report loan payment delinquencies of 30 days or longer to one or more consumer reporting agencies in accordance with applicable law. Borrower agrees to pay all costs of collecting any delinquent payments, including reasonable attorneys' fees, as permitted by applicable law.
+                </p>
+                <p>
+                    <strong><u>Miscellaneous.</u> </strong>This Note is not negotiable. Notwithstanding the foregoing, Lender may assign this Note without notice to Borrower. Borrower may not assign this Note without the prior written consent of Lender. This Note inures to the successors, permitted assigns, heirs and representatives of Borrower and you.
+                </p>
+                <p>
+                    Borrower hereby waives demand, notice of non-payment, protest, and all other notices or demands whatsoever, and hereby consents that without notice to and without releasing the liability of any party, the obligations evidenced by this Note may from time to time, in whole or part, be renewed, extended, modified, accelerated, compromised, settled or released by you.
+                </p>
+                <p>
+                    Any changes to this Note must be in writing signed by Borrower and you. Notices will be mailed electronically to the addresses provided.
+                </p>
+                <p>
+                    This Note represents the entire agreement between the parties hereto with respect to the subject matter hereof. Neither the Borrower nor the Lender have relied on any representations not contained or referred to herein.
+                </p>
+            </div>
+            <div>
+                <strong>STATE LAW NOTICES:</strong>
+                <p>
+                    <u>CALIFORNIA RESIDENTS ONLY:</u> <span>A married applicant may apply for a separate account. </span>
+                </p>
+                <p>
+                    <u>CALIFORNIA AND UTAH RESIDENTS:</u> <span>As required by California and Utah law, Borrower is hereby notified that a negative credit report reflecting on Borrower’s credit record may be submitted to a credit reporting agency if Borrower fails to fulfill the terms of Borrower’s credit obligations.</span>
+                </p>
+                <p>
+                    <u>MASSACHUSETTS RESIDENTS ONLY:</u> <span>Massachusetts law prohibits discrimination based upon marital status or sexual orientation.</span>
+                </p>
+                <p>
+                    <u>MARYLAND RESIDENTS ONLY:</u> <span>You may cancel this contract at any time prior to midnight of the third business day after the date of this transaction. See the attached notice of cancellation form for an explanation of this right. </span>
+                    <u>Registered agent:</u>
+                </p>
+                <p>
+                    Vcorp Services MD, Inc.<br/>
+                    836 Park Avenue<br/>
+                    Second Floor<br/>
+                    Baltimore, MD  21201
+                </p>
+                <p>
+                    <u>MISSOURI AND NEBRASKA RESIDENTS:</u> <span>Oral or unexecuted agreements or commitments to loan money, extend credit or to forbear from enforcing repayment of a debt including promises to extend or renew such debt are not enforceable, regardless of the legal theory upon which it is based that is in any way related to the credit agreement. To protect you (borrower(s)) and us (creditor) from misunderstanding or disappointment, any agreements we reach covering such matters are contained in this writing, which is the complete and exclusive statement of the agreement between us, except as we may later agree in writing to modify it.</span>
+                </p>
+                <p>
+                    <u>NEW JERSEY RESIDENTS:</u> <span>The section headings of the Note are a table of contents and not contract terms. Portions of this Note with references to actions taken to the extent of applicable law apply to acts or practices that New Jersey law permits or requires. In this Note, actions or practices (i) by which Lender is or may be permitted by "applicable law" are permitted by New Jersey law, and (ii) that may be or will be taken by Lender unless prohibited by "applicable law" are permitted by New Jersey law.</span>
+                </p>
+                <p>
+                    <u>NEW YORK, RHODE ISLAND and VERMONT RESIDENTS:</u> <span>Borrower understands and agrees that Lender may obtain a consumer credit report in connection with this application and in connection with any update, renewals for extension of any credit as a result of this application. If Borrower asks, Borrower will be informed whether or not such a report was obtained, and if so, the name and address of the agency that furnished the report. Borrower also understands and agrees that Lender may obtain a consumer credit report in connection with the review or collection of any loan made to Borrower as a result of this application or for other legitimate purposes related to such loans.</span>
+                </p>
+                <p>
+                    <u>OHIO RESIDENTS ONLY:</u> <span>The Ohio laws against discrimination require that all creditors make credit equally available to all credit-worthy customers, and that credit reporting agencies maintain separate credit histories on each individual upon request. The Ohio Civil Rights Commission administers compliance with the law.</span>
+                </p>
+                <p>
+                    <u>WASHINGTON RESIDENTS ONLY:</u> <span>Oral agreements or oral commitments to loan money, extend credit, or to forbear from enforcing repayment of a debt are not enforceable under Washington law.</span>
+                </p>
+                <p>
+                    <u>WISCONSIN RESIDENTS ONLY:</u> <span>For married Wisconsin residents, Borrower’s signature confirms that this loan obligation is being incurred in the interest of Borrower’s marriage or family. No provision of any marital property agreement (pre-marital agreement), unilateral statement under § 766.59 of the Wisconsin statutes or court decree under § 766.70 adversely affects Lender’s interest unless, prior to the time that the loan is approved, Lender is furnished with a copy of the marital property agreement, statement, or decree or have actual knowledge of the adverse provision. If this loan for which Borrower is applying is granted, Borrower will notify Lender if Borrower has a spouse who needs to receive notification that credit has been extended to Borrower.</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    BORROWER<br/>BY: <br/>
+                    <strong>{! userAccountName}</strong>
+                </p>
+            </div>
+            <div style="page-break-after:always;"/>
+            <div>
+                <div style="text-align: center;">
+                    <p><strong>EXHIBIT B</strong></p>
+                    <p><strong>VERSARA LENDING, LLC PRIVACY NOTICE</strong></p>
+                </div>
+                
+                <table Style="border-collapse: collapse;width: 100%;">
+                    <tr>
+                        <td Style="border: 1px solid black;background-color: #D3D3D3;width:20%;"><strong>FACTS</strong></td>
+                        <td style="border: 1px solid black;width:80%;"><strong>WHAT DOES VERSARA LENDING, LLC DO WITH YOUR PERSONAL INFORMATION?</strong></td>
+                    </tr>
+                    <tr>
+                        <td Style="border: 1px solid black;background-color: #D3D3D3;width:20%;"><strong>Why?</strong></td>
+                        <td style="border: 1px solid black;width:80%;">Financial companies choose how they share your personal information. Federal law gives consumers the right to limit some but not all sharing. Federal law also requires us to tell you how we collect, share, and protect your personal information. Please read this notice carefully to understand what we do.</td>
+                    </tr>
+                    <tr>
+                        <td Style="border: 1px solid black;background-color: #D3D3D3;width:20%;"><strong>What?</strong></td>
+                        <td style="border: 1px solid black;width:80%;">
+                            The types of personal information we collect and share depend on the product or service you have with us. This information can include:
+                            <ul>
+                                <li>Social Security number and transaction history</li>
+                                <li>Account balances and payment history</li>
+                                <li>Credit history and credit scores</li>
+                                <li>Credit card and other debt</li>
+                                <li>Income and employment information </li>
+                            </ul>
+                            When you are no longer our customer, we continue to share your information as described in this notice.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td Style="border: 1px solid black;background-color: #D3D3D3;width:20%;"><strong>How?</strong></td>
+                        <td style="border: 1px solid black;width:80%;">
+                           All financial companies need to share customers' personal information to run their everyday business. In the section below, we list the reasons financial companies can share their customers' personal information; the reasons Versara Lending, LLC chooses to share; and whether you can limit this sharing.
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <table Style="border-collapse: collapse;width: 100%;">
+                    <tr>
+                        <th Style="border: 1px solid black;background-color: #D3D3D3;width:60%;text-align: center;">Reasons we share your personal information</th>
+                        <th Style="border: 1px solid black;background-color: #D3D3D3;width:20%;">Does Versara Lending, LLC share?</th>
+                        <th Style="border: 1px solid black;background-color: #D3D3D3;width:20%;">Can you limit this sharing?</th>
+                    </tr>
+                    <tr>
+                        <td Style="width:60%;">
+                            <strong>For our everyday business purposes </strong>- such as to process your transactions, maintain your account(s), respond to court orders and legal investigations, or report to credit bureaus
+                        </td>
+                        <td Style="width:20%;">YES</td>
+                        <td Style="width:20%;">NO</td>
+                    </tr>
+                    <tr>
+                        <td Style="width:60%;">
+                            <strong>For our marketing purposes </strong>- to offer our products and services to you
+                        </td>
+                        <td Style="width:20%;">YES</td>
+                        <td Style="width:20%;">NO</td>
+                    </tr>
+                    <tr>
+                        <td Style="width:60%;">
+                            <strong>For joint marketing with other financial companies</strong>
+                        </td>
+                        <td Style="width:20%;">YES</td>
+                        <td Style="width:20%;">NO</td>
+                    </tr>
+                    <tr>
+                        <td Style="width:60%;">
+                            <strong>For our affiliates' everyday business purposes </strong>- information about your transactions and experiences
+                        </td>
+                        <td Style="width:20%;">YES</td>
+                        <td Style="width:20%;">NO</td>
+                    </tr>
+                    <tr>
+                        <td Style="width:60%;">
+                            <strong>For our affiliates' everyday business purposes </strong> - information about your creditworthiness
+                        </td>
+                        <td Style="width:20%;">YES</td>
+                        <td Style="width:20%;">YES</td>
+                    </tr>
+                    <tr>
+                        <td Style="width:60%;">
+                            <strong>For our affiliates to market to you</strong>
+                        </td>
+                        <td Style="width:20%;">YES</td>
+                        <td Style="width:20%;">YES</td>
+                    </tr>
+                    <tr>
+                        <td Style="width:60%;">
+                            <strong>For non-affiliates to market to you</strong></td>
+                        <td Style="width:20%;">YES</td>
+                        <td Style="width:20%;">YES</td>
+                    </tr>
+                </table>
+                <br/>
+                <table Style="border-collapse: collapse;width: 100%;">
+                    <tr>
+                        <td Style="border: 1px solid black;background-color: #D3D3D3;width:20%;"><strong>To limit our sharing</strong></td>
+                        <td style="border: 1px solid black;width:80%;">
+                            Call 1-855-397-3392 or Email us at OptOut@versaralending.com<br/>
+                            Please note:  If you are a new customer, we can begin sharing your information 30 days from the date we sent this notice. When you are no longer our customer, we can continue to share your information as described in this notice. However, you can contact us at any time to limit our sharing.
+                        </td>
+                    </tr>
+                     <tr>
+                        <td Style="border: 1px solid black;background-color: #D3D3D3;width:20%;"><strong>Question?</strong></td>
+                        <td style="border: 1px solid black;width:80%;">
+                            Call 1-855-397-3392
+                         </td>
+                    </tr>
+                </table>
+                <br/><br/>
+                <table Style="border-collapse: collapse;width: 100%;">
+                    <tr>
+                        <th colspan="2" style="background-color: #D3D3D3;"><strong>WHO WE ARE </strong></th>
+                    </tr>
+                    <tr>
+                        <td Style="border: 1px solid black;background-color: #D3D3D3;width:20%;"><strong>Who is providing this notice?</strong></td>
+                        <td style="border: 1px solid black;width:80%;">
+                            Versara Lending, LLC
+                         </td>
+                    </tr>
+                </table>
+                <br/>
+                <table Style="border-collapse: collapse;width: 100%;">
+                    <tr>
+                        <th colspan="2" style="background-color: #D3D3D3;"><strong>WHAT WE DO </strong></th>
+                    </tr>
+                    <tr>
+                        <td Style="background-color: #D3D3D3;width:20%;"><strong>How does Versara Lending, LLC protect my personal information?</strong></td>
+                        <td style="width:80%;">
+                            To protect your personal information from unauthorized access and use, we use security measures that comply with federal law. These measures include computer safeguards and secured files and buildings. 
+                         </td>
+                    </tr>
+                    <tr>
+                        <td Style="background-color: #D3D3D3;width:20%;"><strong>How does Versara Lending, LLC collect my personal information?</strong></td>
+                        
+                        <td Style="width:80%;">We collect your personal information, for example, when you:
+                            <ul>
+                                <li>Open an account </li>
+                                <li>Apply for a loan </li>
+                                <li>Provide account information or give us your contact information </li>
+                                <li>Provide your income information or employment information</li>
+                                <li>Show your driver’s license</li>
+                            </ul>
+                                We also collect your personal information from others, such as credit bureaus, affiliates, or other companies.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td Style="background-color: #D3D3D3;width:20%;"><strong>Why can’t I limit all sharing?</strong></td>
+                        <td Style="width:80%;">
+                            Federal law gives you the right to limit only:
+                            <ul>
+                                <li>Sharing for affiliates’ everyday business purposes — information about your creditworthiness</li>
+                                <li>Affiliates from using your information to market to you</li>
+                                <li>Sharing for non-affiliates to market to you</li>
+                            </ul>
+                            State laws and individual companies may give you additional rights to limit sharing. See below for more on your rights under state law.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td Style="background-color: #D3D3D3;width:20%;"><strong>What happens when I limit sharing for an account I hold jointly with someone else?</strong></td>
+                        <td Style="width:80%;">
+                            Your choices will apply individually unless you tell us otherwise. Any account holder may express a privacy preference on behalf of the other joint account holders.
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <table Style="border-collapse: collapse;width: 100%;">
+                    <tr>
+                        <th colspan="2" style="background-color: #D3D3D3;"><strong>DEFINITIONS</strong></th>
+                    </tr>
+                    <tr>
+                        <td Style="background-color: #D3D3D3;width:20%;"><strong>Affiliates</strong></td>
+                        <td style="width:80%;">
+                            Companies related by common ownership or control. They can be financial and non-financial companies. 
+                            <ul>
+                                <li>Our affiliate includes Timberline Financial, LLC</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td Style="background-color: #D3D3D3;width:20%;"><strong>Non-affiliates</strong></td>
+                        <td style="width:80%;">
+                            Companies not related by common ownership or control. They can be financial and non-financial companies.
+                            <ul>
+                                <li>Non-affiliates we share with can include direct marketing companies, and service providers.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td Style="background-color: #D3D3D3;width:20%;"><strong>Joint marketing</strong></td>
+                        <td style="width:80%;">
+                            A formal agreement between nonaffiliated financial companies that together market financial products or services to you.
+                            <ul>
+                                <li>Our joint marketing partner(s) include loan finance companies.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <table Style="border-collapse: collapse;width: 100%;">
+                    <tr>
+                        <th style="background-color: #D3D3D3;"><strong>OTHER IMPORTANT INFORMATION</strong></th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>
+                                <strong>Important notice about credit reporting: </strong>
+                                We may report information about your account(s) to credit bureaus and/or consumer reporting agencies. Late payments, missed payments, or other defaults on your account(s) may be reflected in your credit report and/or consumer report.
+                            </p>
+                            <p>
+                                <strong>Do Not Call Policy: </strong>
+                                This Privacy Policy constitutes Versara Lending, LLC’s Do Not Call Policy under the Telephone Consumer Protection Act for all consumers. Versara Lending, LLC maintains an internal Do Not Call preference list. Do Not Call requests will be honored within 30 days and will be effective for at least five years from the date of request. No telemarketing calls will be made to residential or cellular phone numbers that appear on the Versara Lending, LLC Do Not Call list.                            </p>
+                        </td> 
+                    </tr>
+                </table>
+                
+            </div>
+        </body>
+    </html>
+</apex:page>

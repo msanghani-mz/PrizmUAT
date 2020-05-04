@@ -1,0 +1,51 @@
+<apex:page renderAs="pdf"  
+            controller="ClientPortal_DNLGenericAgrmntPageCntrl"
+            applyHtmlTag="false" 
+            showHeader="false" 
+            cache="true"
+            readOnly="true">
+    <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+            <style type="text/css">
+                @page {
+                    size:A4 portrait;
+                    border: 2px solid red;    
+                    @bottom-center {
+                        font-family:sans-serif;
+                        font-size:80%;
+                        content: "Page " counter(page)  " of " counter(pages);
+                    }
+                }
+                
+                #pageNumber{
+                    content : counter(page);
+                }
+                #totalPages{
+                    content : counter(pages);
+                }
+                table, td, th {
+                    border: 1px solid black;
+                    line-height: 1.25;
+                    padding: 10px;
+                }
+                p{
+                    line-height: 1.25;
+                }
+                
+            </style>
+        </head>
+        <body>
+            <div id="main">
+                <apex:outputText value="{!portfolio.ESign_Content__c}" escape="false" rendered="{!showEsign}"/>
+                <apex:outputText value="{!portfolio.CPA_Content__c}" escape="false" rendered="{!showCpa}"/>
+                <apex:outputText value="{!portfolio.TCPA_Content__c}" escape="false" rendered="{!showTcpa}"/>
+                <apex:outputText value="{!portfolio.RDA_Content__c}" escape="false" rendered="{!showRefDisAuth}"/>
+            </div>
+            <div class="signed-by">
+                {!currentDate}<br/>
+                <span>electronically signed by&nbsp;<apex:outputText value="{!applicantsNameString}" /></span>
+            </div>
+        </body>
+    </html>
+</apex:page>

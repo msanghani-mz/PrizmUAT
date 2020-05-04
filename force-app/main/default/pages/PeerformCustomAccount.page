@@ -1,0 +1,107 @@
+<apex:page standardController="Account">
+    <apex:includeScript value="/apex/GlobalJS?core.apexpages.devmode.url=1"/>
+    <apex:includeScript value="{!$Resource.JQuery}"/>
+    <apex:includeScript value="{!$Resource.tools}" />
+    <apex:includeScript value="{!$Resource.PeerformJsApiClient}" />
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+    </script>
+    <style>
+        #loading{
+            padding-top: 2% !important;
+            padding-left: 40% !important;
+        }
+    </style>
+    <apex:form id="changeStatusForm">
+        <apex:pageBlock mode="edit" id="thePageBlock">
+            <apex:pageBlockSection columns="2">
+
+                <apex:pageblockSectionItem id="sectionItemImpersonate">
+                    <apex:commandButton value="Impersonate" id="btnImpersonate" onclick="javascript: impersonate(); return false;" rendered="{!$Profile.Name != 'PF Outsource User'}"/>
+                    <apex:commandButton value="Manage Documents" id="btnManageDocs" onclick="javascript: manageDocs(); return false;" rendered="{!$Profile.Name != 'PF Outsource User'}"/>
+                    
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemSSNButton">
+                    <apex:commandButton value="Display Information" id="btnShowSSN" onclick="javascript: showSSN(); return false;"/>
+                    <apex:outputLabel id="sectionItemFillerDisplayBtn" value="" for="AccountStatusId"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="sectionItemManage">
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemSSN">
+                    <apex:outputLabel id="sectionItemLabelSSN" value="SSN:" for="AccountStatusId"/>
+                    <apex:outputLabel id="sectionItemSSN" value="***-**-****" for="AccountStatusId"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="fillerTuSSN">
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemTuSSN">
+                    <apex:outputLabel id="sectionItemLabelTuSSN" value="Transunion SSN:" for="AccountStatusId"/>
+                    <apex:outputLabel id="sectionItemTuSSN" value="***-**-****" for="AccountStatusId"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="fillerAnswer">
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemAnswer">
+                    <apex:outputLabel id="sectionItemFillerLabelAnswer" value="Security Question Answer:" for="AccountStatusId"/>
+                    <apex:outputLabel id="sectionItemAnswer" value="***" for="AccountStatusId"/>
+                </apex:pageblockSectionItem>
+
+                <script type="text/javascript">
+                
+                    function SetSSN(result)
+                    {
+                        var ssn  = (result.split(':')[0] != '') ? result.split(':')[0] : "none on record";
+                        var tussn  = (result.split(':')[1] != '') ? result.split(':')[1] : "none on record";
+                        var answer = (result.split(':')[2] != '') ? result.split(':')[2] : "";
+
+                        document.getElementById('{!$Component.sectionItemSSN}:sectionItemSSN').innerHTML = ssn;
+                        document.getElementById('{!$Component.sectionItemTuSSN}:sectionItemTuSSN').innerHTML = tussn;
+                        document.getElementById('{!$Component.sectionItemAnswer}:sectionItemAnswer').innerHTML = answer;
+                    }
+
+                    function showSSN()
+                    {
+                        var key = '{!$User.Username}'.replace(".pfsandbox", "") + ":" + '{!$User.Peerform__c}'
+                        var borrowerId = '{!Account.UserId__c}';
+
+                        PeerformJsApiClient.GetUserSSNs(key, borrowerId, SetSSN);
+                    }
+
+                    function impersonate()
+                    {
+                        var adminEmail = calcMD5('{!$User.Username}');
+                        var userId = '{!Account.UserId__c}';
+                        var SForceUrl = encodeURIComponent('{!$Api.Enterprise_Server_URL_250}');
+                        var sessionId = '{!$Api.Session_ID}';
+
+
+                        var url = getBaseUrl() + 'admin/salesforce/sforcei/' 
+                        + '?aid=' + adminEmail 
+                        + '&uid=' + userId
+                        + '&url=' + SForceUrl
+                        + '&sid=' + sessionId;
+
+                        window.open(url,'','height=768,width=1224,scrollbars=no,menubar=no,resizable=yes,toolbar=no,location=no,status=no');
+                    }
+
+                    function manageDocs()
+                    {
+                        var adminEmail = calcMD5('{!$User.Username}');
+                        var userId = '{!Account.UserId__c}';
+                        var SForceUrl = encodeURIComponent('{!$Api.Enterprise_Server_URL_250}');
+                        var sessionId = '{!$Api.Session_ID}';
+
+                        var url = getBaseUrl() + 'admin/salesforce/sforcemd/'
+                        + '?aid=' + adminEmail
+                        + '&uid=' + userId
+                        + '&url=' + SForceUrl
+                        + '&sid=' + sessionId;
+
+                        window.open(url,'','height=768,width=1224,scrollbars=no,menubar=no,resizable=yes,toolbar=no,location=no,status=no'); 
+                    }
+                </script>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

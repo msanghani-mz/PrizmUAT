@@ -1,0 +1,781 @@
+<!--
+@Page Name          : tilaDashboard.page
+@Description        : 
+@Author             : ChangeMeIn@UserSettingsUnder.SFDoc
+@Group              : 
+@Last Modified By   : ChangeMeIn@UserSettingsUnder.SFDoc
+@Last Modified On   : 10/23/2019, 10:17:09 PM
+@Modification Log   : 
+==============================================================================
+Ver         Date                     Author                   Modification
+==============================================================================
+1.0    6/26/2019, 11:00:44 PM   ChangeMeIn@UserSettingsUnder.SFDoc     Initial Version
+-->
+<apex:page id="tilaDashboard" standardController="fsCore__Lending_Application__c" 
+           extensions="TILADashboardController" tabStyle="fsCore__Lending_Application__c"
+           standardStylesheets="true" lightningStylesheets="true"
+           showHeader="false" sidebar="false" applyHtmlTag="false"
+           title="TILA Dashboard" docType="html-5.0">  
+    
+    <head>
+        <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+        <apex:slds />
+        <apex:stylesheet value="{!URLFOR($Resource.fsCore__fs_style, 'fs-style.css')}"/>
+        <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" />
+        <script src="{!URLFOR($Resource.fsCore__fs_svg, 'svg4everybody.js')}"/>
+        <script>var $j = jQuery.noConflict();</script>
+    </head>
+    
+    
+    <fsCore:collapsibleHeaderCSS />
+    
+    <apex:outputPanel id="messagePanel"  styleClass="fs-message-panel">
+        <apex:pageMessages escape="false"></apex:pageMessages>
+    </apex:outputPanel>    
+    
+    <body>
+        <div class="slds-scope">
+            <apex:form id="theForm" styleClass="slds-m-horizontal_x-small slds-m-bottom_small">                
+                <!-- header -->
+                <div class="slds-page-header slds-page-header_record-home slds-m-bottom_small">
+                        <div class="slds-page-header__row">
+                            <div class="slds-page-header__col-title">
+                                <div class="slds-media">
+                                    <div class="slds-media__figure slds-align-middle">
+                                        <fsCore:svgIcon iconStyleClass="slds-icon slds-icon_medium  slds-icon-standard-apps"
+                                                        iconPath="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#hierarchy')}"/>
+                                    </div>
+                                    <div class="slds-media__body">
+                                        <div class="slds-page-header__name">
+                                            <div class="slds-page-header__name-title">
+                                                <h1>
+                                                    <span>TILA Dashboard</span>
+                                                    <span class="slds-page-header__title slds-truncate" >{!mTILAObj.loanNumber}</span>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-page-header__col-actions">
+                                    <apex:actionStatus id="waitActionStatus">
+                                            <apex:facet name="start">
+                                                <fsCore:fsSpinner spinnerSize="medium"/>
+                                            </apex:facet>
+                                        </apex:actionStatus>  
+                                                                    
+                                <div class="slds-page-header__controls">                   
+                                    
+                                    <div class="slds-page-header__control">
+                                        <ul class="slds-button-group-list">
+                                            <li>
+                                                    <apex:commandButton action="{!manageItemizations}"
+                                                    value="Manage Itemizations" 
+                                                    status="waitActionStatus"
+                                                    reRender="messagePanel,theForm"
+                                                    styleClass="slds-button slds-button_neutral"/>
+                                                </li>                                    
+                                                <li>
+                                <apex:commandButton action="{!approveApplication}"
+                                                    value="Approve Application" 
+                                                    title="This action will generate the pricing based on the approval date"
+                                                    status="waitActionStatus"
+                                                    reRender="messagePanel,theForm"
+                                                    disabled="{!NOT(mApplicationApprovalRequired)}"
+                                                    styleClass="slds-button slds-button_neutral"/>
+                                                </li>                                    
+                                                <li>
+                                <apex:commandButton action="{!createPreTILA}"
+                                                    value="Create Pre-Settlement TILA Document" 
+                                                    status="waitActionStatus"
+                                                    reRender="messagePanel,theForm"
+                                                    title="This action will only be enabled after the application was approved"
+                                                    disabled="{!(mApplication.Final_Approval_Date__c == null)}"
+                                                    styleClass="slds-button slds-button_neutral"/>
+                                                </li>                                    
+                                                <li>
+                                <apex:commandButton action="{!createPostTILA}"
+                                                    value="Create Post-Settlement TILA Document" 
+                                                    id="createPostTilaButton"
+                                                    status="waitActionStatus"
+                                                    reRender="messagePanel,theForm"
+                                                    disabled="{!(mApplication.Is_Final_Contract_Generated__c == false)}"  
+                                                    title="This action will be enabled after the final the itemizations are settled"
+                                                    styleClass="slds-button slds-button_neutral"/>
+                                                </li>                                    
+                                                <li>
+                                <apex:commandButton action="{!onClose}"
+                                                    value="Close" immediate="true"
+                                                    status="waitActionStatus"
+                                                    reRender="messagePanel,theForm"
+                                                    styleClass="slds-button slds-button_neutral"/>
+                                            </li>                                    
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-page-header__row slds-page-header__row_gutters">
+                                <div class="slds-page-header__col-details">
+                                    <ul class="slds-page-header__detail-row">
+                                        <li class="slds-page-header__detail-block">
+                                            <div class="slds-text-title slds-truncate" >Applicant Name</div>
+                                            <div class="slds-truncate" >{!mApplication.fsCore__Title__c}</div>
+                                        </li>
+                                        <li class="slds-page-header__detail-block">
+                                            <div class="slds-text-title slds-truncate" >{!$ObjectType.fsCore__Lending_Application__c.Fields.Underwriter__c.Label}</div>
+                                            <div class="slds-truncate" title="Description that demonstrates truncation with a long text field.">{!mApplication.Underwriter__c}</div>
+                                        </li>
+                                        <li class="slds-page-header__detail-block">
+                                            <div class="slds-text-title slds-truncate" title="Field 4">{!$ObjectType.fsCore__Lending_Application__c.Fields.Loan_Officer__c.Label}</div>
+                                            <div class="slds-truncate" >{!mApplication.Loan_Officer__r.firstName}&nbsp;{!mApplication.Loan_Officer__r.lastName}</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>                              
+
+                <!--<div class="slds-page-header slds-m-bottom_small" role="banner">
+                    <div class="slds-grid slds-container_fluid" >
+                        <div class="slds-col" align="left">
+                            <div class="slds-media">
+                                <div class="slds-media__figure">
+                                    <fsCore:svgIcon iconStyleClass="slds-icon slds-icon_large slds-icon-standard-dashboard"
+                                                    iconPath="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#dashboard')}"/>
+                                </div>
+                                <div class="slds-media__body slds-align-middle">
+                                    <p class="slds-text-heading__label">{!mTILAObj.loanNumber}</p>
+                                    <h1 class="slds-page-header__title slds-m-right_small slds-truncate slds-align-middle">
+                                        TILA Dashboard
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="buttonPanel" class="slds-col slds-no-flex slds-align-middle">
+                            
+                            <apex:commandButton action="{!manageItemizations}"
+                                                value="Manage Itemizations" 
+                                                status="waitActionStatus"
+                                                reRender="messagePanel,theForm"
+                                                styleClass="slds-button slds-button_neutral"/>
+                            
+                            <apex:commandButton action="{!approveApplication}"
+                                                value="Approve Application" 
+                                                title="This action will generate the pricing based on the approval date"
+                                                status="waitActionStatus"
+                                                reRender="messagePanel,theForm"
+                                                disabled="{!NOT(mApplicationApprovalRequired)}"
+                                                styleClass="slds-button slds-button_neutral"/>
+                            
+                            <apex:commandButton action="{!createPreTILA}"
+                                                value="Create Pre-Settlement TILA Document" 
+                                                status="waitActionStatus"
+                                                reRender="messagePanel,theForm"
+                                                title="This action will only be enabled after the application was approved"
+                      
+
+disabled="{!(mApplication.Final_Approval_Date__c == null)}"
+                                                styleClass="slds-button slds-button_neutral"/>
+                            
+                            <apex:commandButton action="{!createPostTILA}"
+                                                value="Create Post-Settlement TILA Document" 
+                                                id="createPostTilaButton"
+                                                status="waitActionStatus"
+                                                reRender="messagePanel,theForm"
+                                                disabled="{!(mApplication.Is_Final_Contract_Generated__c == false)}"  
+                                                title="This action will be enabled after the final the itemizations are settled"
+                                                styleClass="slds-button slds-button_neutral"/>
+                            
+                            <apex:commandButton action="{!onClose}"
+                                                value="Close" immediate="true"
+                                                status="waitActionStatus"
+                                                reRender="messagePanel,theForm"
+                                                styleClass="slds-button slds-button_neutral"/>
+                            
+                            
+                            <apex:actionStatus id="waitActionStatus">
+                                <apex:facet name="start">
+                                    <fsCore:fsSpinner spinnerSize="medium"/>
+                                </apex:facet>
+                            </apex:actionStatus>                                                  
+                        </div>
+                    </div>
+                </div>-->
+                
+                <!-- / header -->
+                
+                <!-- content -->
+                <div class="slds-box slds-box_x-small slds-m-top_small">
+                    <!-- General Info -->
+                    <div class="slds-grid slds-wrap slds-grid_align-spread slds-container_fluid">
+                        <div class="slds-p-around_x-small slds-size_1-of-2">
+                            <table class="slds-table slds-no-row-hover" width="100%">
+                                <tbody>
+                                    <tr>
+                                        <th width="40%"><span class="slds-text-heading_medium slds-text-color_weak"><strong>Loan Number</strong></span></th>
+                                        <td width="60%"><span class="slds-text-heading_medium">{!mTILAObj.loanNumber}</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>                        
+                        </div>
+                        
+                        <div class="slds-p-around_x-small slds-size_1-of-2">
+                            <table class="slds-table slds-no-row-hover" width="100%">
+                                <tbody>
+                                    <tr>
+                                        <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Final Approval Date</strong></span></th>
+                                        <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.finalApprovalDateStr}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>DNL Application Date</strong></span></th>
+                                        <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.dnlApplicationDate}</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- / General Info -->
+                    
+                    <!-- Client Info -->
+                    <div class="slds-grid slds-wrap slds-grid_align-spread slds-container_fluid slds-p-top_medium">
+                        <div class="slds-p-around_x-small slds-size_1-of-2">
+                            <fsCore:collapsibleHeader label="Client Information (Applicant)" for="clientInfoApplicant" labelStyle="font-weight: 600;"/>
+                            <div id="clientInfoApplicant" class="slds-m-horizontal_x-small slds-m-top_x-small">
+                                <table class="slds-table slds-no-row-hover" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Client ID</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.clientId}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Client Name</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.applicantInformation.clientName}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Home Address</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.applicantInformation.homeStreet}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Home City</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.applicantInformation.homeCity}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Home State</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.applicantInformation.homeState}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Home Zip</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.applicantInformation.homeZip}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Home Phone</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.applicantInformation.homePhone}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Mobile Phone</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.applicantInformation.mobilePhone}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <apex:outputPanel layout="block" styleClass="slds-p-around_x-small slds-size_1-of-2"  rendered="{!(mIsCoapplicantExist)}" >
+                            <fsCore:collapsibleHeader label="Client Information (Co-Applicant)" for="clientInfoCoApplicant" labelStyle="font-weight: 600;"/>
+                            <div id="clientInfoCoApplicant" class="slds-m-horizontal_x-small slds-m-top_x-small">
+                                <table class="slds-table slds-no-row-hover" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <th width="40%">&nbsp;</th>
+                                            <td width="60%">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Client Name</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.coApplicantInformation.clientName}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Home Address</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.coApplicantInformation.homeStreet}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Home City</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.coApplicantInformation.homeCity}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Home State</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.coApplicantInformation.homeState}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Home Zip</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.coApplicantInformation.homeZip}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Home Phone</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.coApplicantInformation.homePhone}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Mobile Phone</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.coApplicantInformation.mobilePhone}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </apex:outputPanel>
+                    </div>
+                    
+                    <!-- / client Info -->
+                    
+                    <!-- Usury Details -->
+                    <div class="slds-container_fluid slds-p-top_medium">
+                        <fsCore:collapsibleHeader label="Usury Details (Driven by Applicant State)" for="usuryDetails" labelStyle="font-weight: 600;"/>
+                        <div id="usuryDetails" class="slds-grid slds-wrap slds-grid_align-spread slds-container_fluid slds-m-top_x-small">
+                            <div class="slds-p-around_x-small slds-size_1-of-2">
+                                <table class="slds-table slds-no-row-hover" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Interest Rate</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.interestRate}%</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>APR</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.apr}%</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="slds-p-around_x-small slds-size_1-of-2">
+                                <table class="slds-table slds-no-row-hover" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Origination Fee</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.originationFee}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Prepaid Finance Charge</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.prepaidFinanceCharge}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / Usury Details -->
+                    
+                    <!-- / Repayment Schedule -->
+                    <div class="slds-container_fluid slds-p-top_medium" >
+                        <fsCore:collapsibleHeader label="Repayment Schedule" for="repaymentSchedules" labelStyle="font-weight: 600;"/>
+                        <div id="repaymentSchedules" class="slds-grid slds-wrap slds-grid_align-spread slds-container_fluid slds-m-top_x-small"  >
+                            <div class="slds-p-around_x-small slds-size_1-of-3" >
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th><span class="slds-text-title_caps slds-text-align_left"><strong>Number Of Payments</strong></span></th>
+                                            <th><span class="slds-text-title_caps slds-text-align_right"><strong>Payment Amount</strong></span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat value="{!mTILAObj.repaymentScheduleList}" var="repay">
+                                            <tr class="slds-hint-parent">
+                                                <td><span class="slds-text-body_regular">{!repay.numberOfPayments}</span></td> 
+                                                <td><span class="slds-text-body_regular" >${!repay.paymentAmount}</span></td>
+                                            </tr>
+                                        </apex:repeat>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- / Repayment Schedule -->
+                </div>
+                <!-- / content -->
+                
+                
+                <!-- / Tabs Panel -->
+                <div id="settlementTab" class="slds-tabs_scoped slds-m-top_medium">
+                    <ul class="slds-tabs_scoped__nav" role="tablist">
+                        <!-- Tab 1 Title -->
+                        <li class="slds-tabs_scoped__item slds-text-heading_label slds-active" role="presentation">
+                            <a id="tab_1_Title" class="slds-tabs_scoped__link" href="#void" role="tab" 
+                               tabindex="0" aria-selected="true" aria-controls="tab_1_Content" >
+                                <span style="font-size:15px !important;">Pre-Settlement</span>
+                            </a>
+                        </li>
+                        <!-- / Tab 1 Title -->
+                        
+                        <!-- Tab 2 Title -->
+                        <li class="slds-tabs_scoped__item slds-text-heading_label"
+                            role="presentation">
+                            <a id="tab_2_Title" class="slds-tabs_scoped__link" href="#void" role="tab" 
+                               tabindex="-1" aria-selected="false" aria-controls="tab_2_Content" >
+                                <span style="font-size:15px !important;">Post-Settlement</span>
+                            </a>
+                        </li>
+                        <!-- / Tab 2 Title -->                    
+                    </ul>
+                    
+                    <!-- Tab 1 Contents -->
+                    <div id="tab_1_Content" class="slds-tabs_scoped__content slds-show" role="tabpanel" aria-labelledby="tab_1_Title">
+                        
+                        <!-- DRP Information -->
+                        <fsCore:collapsibleHeader label="DRP Payment Information" for="drpPaymentInfoEstimate" labelStyle="font-weight: 600;"/>
+                        
+                        <div id="drpPaymentInfoEstimate" class="slds-grid slds-wrap slds-grid_align-spread slds-container_fluid">
+                            <div class="slds-p-around_x-small slds-size_1-of-2">
+                                <table class="slds-table slds-no-row-hover" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Debt Resolution Program Name</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.DRPProgramName}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Program Type</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.DRPProgramType}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Payment Processor</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.paymentProcessor}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Draft Frequency</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.estdraftFrequency}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Draft Amount Per Period</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.estdraftAmount}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="slds-p-around_x-small slds-size_1-of-2">
+                                <table class="slds-table slds-no-row-hover" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Next DRP Draft Date</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.nextDRPDraftDateStr}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Est. Final DRP Draft Date</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.estFinalDRPDraftDate}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Estimated Disbursement Date</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.estDisbursementDateStr}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Est. First Repayment Date</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.estFirstRepaymentDateStr}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- / DRP Information -->
+                        
+                        <!-- Pre-Settlement -->
+                        <div class="slds-container_fluid slds-p-top_medium">
+                            <fsCore:collapsibleHeader label="Pre-Settlement (ESTIMATES)" for="preSettlementTable" labelStyle="font-weight: 600;"/>
+                            <div id="preSettlementTable" class="slds-m-horizontal_x-small slds-m-top_x-small">
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered" width="100%">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th class="slds-text-title_caps" scope="col">
+                                                <div class="slds-truncate">Original Creditor</div>
+                                            </th>
+                                            <th class="slds-text-title_caps" scope="col">
+                                                <div class="slds-truncate">Current Creditor</div>
+                                            </th>
+                                            <th class="slds-text-title_caps slds-text-align_right" scope="col">
+                                                <div class="slds-truncate">Original Enrolled Balance</div>
+                                            </th>
+                                            <th class="slds-text-title_caps slds-text-align_right" scope="col">
+                                                <div class="slds-truncate">Estimated Current Balance</div>
+                                            </th>
+                                            <th class="slds-text-title_caps slds-text-align_right" scope="col">
+                                                <div class="slds-truncate">Estimated Settlement %</div>
+                                            </th>
+                                            <th class="slds-text-title_caps slds-text-align_right" scope="col" width="15%">
+                                                <div class="slds-truncate">Estimated Settlement Balance</div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat value="{!mTILAObj.preSettlementItemizationsList}" var="estimate">
+                                            <tr class="slds-hint-parent">
+                                                <td data-label="Original Creditor"><div class="slds-truncate">{!estimate.originalCreditor}</div></td>
+                                                <td data-label="Current Creditor"><div class="slds-truncate">{!estimate.currentCreditor}</div></td>
+                                                <td data-label="Original Enrolled Balance" class="slds-text-align_right">
+                                                    <div class="slds-truncate">{!estimate.originalEnrolledBalance}</div>
+                                                </td>
+                                                <td data-label="Estimated Current Balance" class="slds-text-align_right">
+                                                    <div class="slds-truncate">{!estimate.estimatedEnrolledBalance}</div>
+                                                </td>
+                                                <td data-label="Estimated Settlement %" class="slds-text-align_right">
+                                                    <div class="slds-truncate">{!estimate.estimatedSettlementPercentage}%</div>
+                                                </td>
+                                                <td data-label="Estimated Settlement Balance" width="15%" class="slds-text-align_right">
+                                                    <div class="slds-truncate">{!estimate.estimatedSettlementBalance}</div>
+                                                </td>
+                                            </tr>
+                                        </apex:repeat>
+                                        <!-- Totals -->
+                                        <tr style="font-weight: 600;">
+                                            <td data-label=""><div class="slds-truncate"></div></td>
+                                            <td data-label=""><div class="slds-truncate"></div></td>
+                                            <td data-label="Total Original Enrolled Balance" class="slds-text-align_right">
+                                                <div class="slds-truncate">{!mTILAObj.estTotalOriginalEnrolledBal}</div>
+                                            </td>
+                                            <td data-label="Total Estimated Current Balance" class="slds-text-align_right">
+                                                <div class="slds-truncate">{!mTILAObj.estTotalCurrentEnrolledBal}</div>
+                                            </td>
+                                            <td data-label="Net Estimated Settlement %" class="slds-text-align_right">
+                                                <div class="slds-truncate">{!mTILAObj.estNetSettlementPercentage}%</div>
+                                            </td>
+                                            <td data-label="Total Estimated Settlement Balance" width="15%" class="slds-text-align_right">
+                                                <div class="slds-truncate">{!mTILAObj.estTotalSettlementBal}</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br/>
+                                <table class="slds-table slds-table_cell-buffer slds-no-row-hover" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <td ><span class="slds-text-body_regular">MINUS Cash in Dedicated Account to pay creditor(s) listed above</span></td>
+                                            <td width="15%" class="slds-text-align_right slds-text-body_regular">{!mTILAObj.estCashInDedicatedAccount}</td>
+                                        </tr>
+                                        <tr>
+                                            <td ><span class="slds-text-body_regular">MINUS One (1) month of payment to Debt Resolution Program</span></td>
+                                            <td width="15%" class="slds-text-align_right slds-text-body_regular">{!mTILAObj.estOneMonthPaymentToDRP}</td>
+                                        </tr>
+                                        <tr>
+                                            <td ><span class="slds-text-body_regular">PLUS Remaining Fees due to Debt Resolution Program</span></td>
+                                            <td width="15%" class="slds-text-align_right slds-text-body_regular">{!mTILAObj.estRemFeeDueToDRP}</td>
+                                        </tr>
+                                        <tr style="font-weight: 600; border-top: 2px solid rgb(221, 219, 218);">
+                                            <td><span class="slds-text-body_regular">Estimated Settlement Disbursements (Amount Financed)</span></td>
+                                            <td width="15%" class="slds-text-align_right slds-text-body_regular">{!mTILAObj.estSettlementDisbursements}</td>
+                                        </tr>
+                                        <tr>
+                                            <td ><span class="slds-text-body_regular">&nbsp;</span></td>
+                                            <td width="15%" class="slds-text-align_right slds-text-body_regular">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="slds-text-body_regular">PLUS Origination Fee</span></td>
+                                            <td width="15%" class="slds-text-align_right slds-text-body_regular">{!mTILAObj.estOriginationFee}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="slds-text-body_regular">PLUS Prepaid Finance Charge Fee</span></td>
+                                            <td width="15%" class="slds-text-align_right slds-text-body_regular">{!mTILAObj.estPrepaidFinanceCharge}</td>
+                                        </tr>
+                                        <tr style="font-weight: 600; border-top: 2px solid rgb(221, 219, 218); border-bottom: 2px solid rgb(221, 219, 218);">
+                                            <td><span class="slds-text-body_regular">Estimated Loan Amount</span></td>
+                                            <td width="15%" class="slds-text-align_right slds-text-body_regular">{!mTILAObj.estLoanAmount}</td>
+                                        </tr>
+                                         <tr style=" border-top: 2px solid rgb(221, 219, 218); border-bottom: 2px solid rgb(221, 219, 218);">
+                                            <td><span class="slds-text-body_regular">PLUS Finance Charge</span></td>
+                                            <td width="15%" class="slds-text-align_right slds-text-body_regular">{!mTILAObj.plusFinanceCharge}</td>
+                                        </tr>
+                                         <tr style="font-weight: 600; border-top: 2px solid rgb(221, 219, 218); ">
+                                            <td><span class="slds-text-body_regular">Total of Payments</span></td>
+                                            <td width="15%" class="slds-text-align_right slds-text-body_regular">{!mTILAObj.totalOfPayments}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>                    
+                        <!-- / Pre-Settlement -->
+                    </div>
+                    <!-- / Tab 1 Contents -->
+                    
+                    <!-- Tab 2 Contents -->
+                    <div id="tab_2_Content" class="slds-tabs_scoped__content slds-hide" role="tabpanel" aria-labelledby="tab_2_Title">
+                            <apex:actionStatus id="waitActionStatus1">
+                                    <apex:facet name="start">
+                                        <fsCore:fsSpinner spinnerSize="medium"/>
+                                    </apex:facet>
+                                </apex:actionStatus>  
+                                                    
+                        <div id="finalSettlementbuttonPanel" style="float:right;">        
+                            <apex:commandButton action="{!generateFinalContract}"
+                                                id="GenerateFinalButton"
+                                                value="Generate Final Settlement" 
+                                                title="This action will generate the actual final schedule"
+                                                status="waitActionStatus1"
+                                                reRender="messagePanel,createPostTilaButton,GenerateFinalButton,tab_2_Content"
+                                                disabled="{!(mApplication.Is_PreTila_Signed__c == false)}"
+                                                styleClass="slds-button slds-button_neutral" />                        
+                        </div>                
+                        <!-- DRP Information -->
+                        <fsCore:collapsibleHeader label="DRP Payment Information" for="drpPaymentInfoActual" labelStyle="font-weight: 600;"/>
+                        
+                        <div id="drpPaymentInfoActual" class="slds-grid slds-wrap slds-grid_align-spread slds-container_fluid">
+                            <div class="slds-p-around_x-small slds-size_1-of-2">
+                                <table class="slds-table slds-no-row-hover" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Debt Resolution Program Name</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.DRPProgramName}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Program Type</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.DRPProgramType}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Payment Processor</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.paymentProcessor}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>&nbsp;</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">&nbsp;</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="slds-p-around_x-small slds-size_1-of-2">
+                                <table class="slds-table slds-no-row-hover" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Actual Final DRP Draft Date</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.actualFinalDRPDraftDate}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Actual Disbursement Date</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.actualDisbursementDateStr}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Actual First Repayment Date</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.actualFirstRepaymentDateStr}</span></td>
+                                        </tr>                                        
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Draft Frequency</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.actualdraftFrequency}</span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="40%"><span class="slds-text-body_regular slds-text-color_weak"><strong>Draft Amount Per Period</strong></span></th>
+                                            <td width="60%"><span class="slds-text-body_regular">{!mTILAObj.actualdraftAmount}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- / DRP Information -->
+                        
+                        <!-- Post-Settlement -->
+                        <div class="slds-container_fluid slds-p-top_medium">
+                            <fsCore:collapsibleHeader label="Post-Settlement (ACTUALS)" for="postSettlementTable" labelStyle="font-weight: 600;"/>
+                            <div id="postSettlementTable" class="slds-m-horizontal_x-small slds-m-top_x-small">
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered" width="100%">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th class="slds-text-title_caps" scope="col">
+                                                <div class="slds-truncate">Current Creditor</div>
+                                            </th>
+                                            <th class="slds-text-title_caps" scope="col">
+                                                <div class="slds-truncate">Actual Disbursement Date</div>
+                                            </th>
+                                            <th class="slds-text-title_caps slds-text-align_right" scope="col">
+                                                <div class="slds-truncate">Actual Settlement Amount</div>
+                                            </th>
+                                            <th class="slds-text-title_caps slds-text-align_right" scope="col">
+                                                <div class="slds-truncate">Actual Settlement Fee</div>
+                                            </th>
+                                            <th class="slds-text-title_caps slds-text-align_right" scope="col">
+                                                <div class="slds-truncate">Actual Prepaid Finance Charge</div>
+                                            </th>
+                                            <th class="slds-text-title_caps slds-text-align_right" scope="col" width="15%">
+                                                <div class="slds-truncate">Actual Disbursement Amount</div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat value="{!mTILAObj.postSettlementItemizationsList}" var="actual">
+                                            <tr class="slds-hint-parent">
+                                                <td data-label="Current Creditor"><div class="slds-truncate">{!actual.currentCreditor}</div></td>
+                                                <td data-label="Actual Disbursement Date"><div class="slds-truncate">{!actual.actualDisbursementDate}</div></td>
+                                                <td data-label="Actual Settlement Amount" class="slds-text-align_right">
+                                                    <div class="slds-truncate">{!actual.actualSettlementAmount}</div>
+                                                </td>
+                                                <td data-label="Actual Settlement Fee" class="slds-text-align_right">
+                                                    <div class="slds-truncate">{!actual.actualSettlementFee}</div>
+                                                </td>
+                                                <td data-label="Actual Prepaid Finance Charge" class="slds-text-align_right">
+                                                    <div class="slds-truncate">{!actual.actualPrepaidCharge}</div>
+                                                </td>
+                                                <td data-label="Actual Disbursement Amount" width="15%" class="slds-text-align_right">
+                                                    <div class="slds-truncate">{!actual.actualVersaraDisbAmount}</div>
+                                                </td>
+                                            </tr>
+                                        </apex:repeat>
+                                        <!-- Totals -->
+                                        <tr style="font-weight: 600;">
+                                            <td data-label=""><div class="slds-truncate"></div></td>
+                                            <td data-label=""><div class="slds-truncate"></div></td>
+                                            <td data-label="Total Settlement Amount" class="slds-text-align_right">
+                                                <div class="slds-truncate">{!mTILAObj.actualTotalSettlementAmount}</div>
+                                            </td>
+                                            <td data-label="Total Sttlement Fee" class="slds-text-align_right">
+                                                <div class="slds-truncate">{!mTILAObj.actualTotalSettlementFee}</div>
+                                            </td>
+                                            <td data-label="Total Prepaid Finance Charge" class="slds-text-align_right">
+                                                <div class="slds-truncate">{!mTILAObj.actualTotalPrepaidCharge}</div>
+                                            </td>
+                                            <td data-label="Total Disbursement Amount" width="15%" class="slds-text-align_right">
+                                                <div class="slds-truncate">{!mTILAObj.actualTotalVersaraDisbAmount}</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br/>
+                                <table class="slds-table slds-table_cell-buffer slds-no-row-hover" width="100%">
+                                    <tbody>
+                                        <tr>
+                                            <td ><span class="slds-text-body_regular">MINUS Cash in Dedicated Account paid to creditor(s) listed above</span></td>
+                                            <td width="15%" class="slds-text-body_regular slds-text-align_right">{!mTILAObj.actualCashInDedicatedAccount}</td>
+                                        </tr>
+                                        <tr>
+                                            <td ><span class="slds-text-body_regular">&nbsp;</span></td>
+                                            <td width="15%" class="slds-text-body_regular slds-text-align_right">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td ><span class="slds-text-body_regular">PLUS Remaining Fees due to Debt Resolution Program</span></td>
+                                            <td width="15%" class="slds-text-body_regular slds-text-align_right">{!mTILAObj.actualRemFeeDueToDRP}</td>
+                                        </tr>
+                                        <tr style="font-weight: 600; border-top: 2px solid rgb(221, 219, 218);">
+                                            <td><span class="slds-text-body_regular">Settlement Disbursements (Amount Financed)</span></td>
+                                            <td width="15%" class="slds-text-body_regular slds-text-align_right">{!mTILAObj.actualSettlementDisbursements}</td>
+                                        </tr>
+                                        <tr>
+                                            <td ><span class="slds-text-body_regular">&nbsp;</span></td>
+                                            <td width="15%" class="slds-text-body_regular slds-text-align_right">&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="slds-text-body_regular">PLUS Origination Fee</span></td>
+                                            <td width="15%" class="slds-text-body_regular slds-text-align_right">{!mTILAObj.actualOriginationFee}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="slds-text-body_regular">PLUS Prepaid Finance Charge Fee</span></td>
+                                            <td width="15%" class="slds-text-body_regular slds-text-align_right">{!mTILAObj.actualPrepaidFinanceCharge}</td>
+                                        </tr>
+                                        <tr style="font-weight: 600; border-top: 2px solid rgb(221, 219, 218); border-bottom: 2px solid rgb(221, 219, 218);">
+                                            <td><span class="slds-text-body_regular">Loan Amount</span></td>
+                                            <td width="15%" class="slds-text-body_regular slds-text-align_right">{!mTILAObj.actualLoanAmount}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>                    
+                        <!-- / Post-Settlement -->
+                    </div>
+                    <!-- / Tab 2 Contents -->
+                </div>
+                <!-- / Tabs Panel -->
+                
+                
+            </apex:form>
+        </div>
+        <script src="{!URLFOR($Resource.fsCore__fs_slds_tabs_js, 'fs_slds_tabs_js.js')}"/>
+        </body>
+        </apex:page>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This action will submit the application to the underwriter.</description>
+    <fieldOverrides>
+        <field>Is_Application_Submitted__c</field>
+        <formula>true</formula>
+    </fieldOverrides>
+    <label>Submit Application</label>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <quickActionLayout>
+        <layoutSectionStyle>TwoColumnsLeftToRight</layoutSectionStyle>
+        <quickActionLayoutColumns>
+            <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
+                <field>Is_Application_Submit_Confirmed__c</field>
+                <uiBehavior>Edit</uiBehavior>
+            </quickActionLayoutItems>
+        </quickActionLayoutColumns>
+        <quickActionLayoutColumns/>
+    </quickActionLayout>
+    <successMessage>Application Submitted</successMessage>
+    <type>Update</type>
+</QuickAction>

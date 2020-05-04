@@ -1,0 +1,54 @@
+<!--
+ -- Page   : creditReportPage
+ --
+ -- Author : Financial Spectra
+ -->
+<apex:page standardController="Credit_Pull_Report__c" extensions="CreditReportPDFController" applyHtmlTag="true" renderAs="pdf">
+
+    <head>
+        <script language="javascript">
+            function toggleVisibility(useID) {
+                var tmp = document.getElementById(useID);
+                var dheader = document.getElementById('TU40_ARM_SD');
+                var sheader = document.getElementById('TU40_ARM_SS');
+                if (tmp) {
+                    if (tmp.style.display == "block"){ tmp.style.display="none"; }
+                    else { tmp.style.display="block"; }
+                }
+                if (dheader) {
+                    if (dheader.style.display=="block"){ dheader.style.display="none"; }
+                    else { dheader.style.display="block"; }
+                }
+                if (sheader) {
+                    if (sheader.style.display=="block"){ sheader.style.display="none"; }
+                    else { sheader.style.display="block"; }
+                }
+            }
+        </script>
+        <style type="text/css">
+            <!--
+            .spaced {font-family: arial; font-size: 12pt; letter-spacing: 3px} 
+            P.TRpad {font-family: monospace; font-size: 10pt; padding-top: 0.05cm; padding-bottom: 0.05cm; padding-left: 0.25cm; padding-right: 0.25cm; letter-spacing: -1px}
+            TH {font-family: arial; font-size: 9pt}
+            P {font-family: arial; font-size: 9pt; padding-top: 0.05cm; padding-bottom: 0.05cm; padding-left: 0.05cm; padding-right: 0.05cm}
+            P.pipad {font-family : arial; font-size: 9pt; padding-right: 0.05cm; padding-top: 0.05cm; padding-bottom: 0.05cm}
+            TD {font-family: arial; font-size: 9pt; padding-top: 0.05cm; padding-bottom: 0.05cm; padding-left: 0.05cm; padding-right: 0.05cm}
+            .mono {font-family: 'Courier New',monospace; font-size: 10pt}
+            .pagebreak {page-break-after: always}
+            -->
+        </style>
+        <!-- Styling moved to the controller because we need inline styling for pdf
+        <style type="text/css">
+            .goodmop {background-color: #FFFFFF}
+            .badmop {background-color: #ffb6c1}
+            .alert {background-color:lightsalmon}
+            .separator {background-color:#FFFFCC; font-weight:bold}
+        </style> -->       
+    </head>
+    
+    <body>
+        <apex:outputText value="{!mReportContent}" escape="false"></apex:outputText>
+        <!--<apex:outputText value="{!mCoReportContent}" escape="false"></apex:outputText>-->
+    </body>
+    
+</apex:page>

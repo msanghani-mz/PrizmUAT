@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Send Invitation Email to Client Portal &amp; Update Opportunity Status</description>
+    <height>250</height>
+    <label>Invite to Portal</label>
+    <lightningComponent>ClientPortal_SendInvitation</lightningComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningComponent</type>
+    <width>-100</width>
+</QuickAction>

@@ -1,0 +1,159 @@
+<apex:page standardController="Lead">
+    <apex:includeScript value="/apex/GlobalJS?core.apexpages.devmode.url=1"/>
+    <apex:includeScript value="{!$Resource.JQuery}"/>
+    <apex:includeScript value="{!$Resource.tools}" />
+    <apex:includeScript value="{!$Resource.PeerformJsApiClient}" />
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+    </script>
+    <style>
+        #loading{
+            padding-top: 2% !important;
+            padding-left: 40% !important;
+        }
+    </style>
+    <apex:form id="changeStatusForm">
+        <apex:pageBlock mode="edit" id="thePageBlock">
+            <apex:pageBlockSection columns="2">
+
+                <apex:pageblockSectionItem id="sectionItemImpersonate">
+                    <apex:commandButton value="Impersonate" id="btnImpersonate" onclick="javascript: impersonate(); return false;" rendered="{!$Profile.Name != 'PF Outsource User'}"/>
+                    <apex:outputLabel id="sectionItemFillerLabelImpersonate" value="" for="AccountStatusId"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="sectionItemSSNButton">
+                    <apex:commandButton value="Display Information" id="btnShowSSN" onclick="javascript: showSSN(); return false;"/>
+                    <apex:outputLabel id="sectionItemButtonFiller" value="" for="AccountStatusId"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="fillerSSN">
+                </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem id="sectionItemSSN">
+                    <apex:outputLabel id="sectionItemLabelSSN" value="SSN:" for="AccountStatusId"/>
+                    <apex:outputLabel id="sectionItemSSN" value="***-**-****" for="AccountStatusId"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="fillerTuSSN">
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemTuSSN">
+                    <apex:outputLabel id="sectionItemLabelTuSSN" value="Transunion SSN:" for="AccountStatusId"/>
+                    <apex:outputLabel id="sectionItemTuSSN" value="***-**-****" for="AccountStatusId"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="fillerAnswer">
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemAnswer">
+                    <apex:outputLabel id="sectionItemLabelAnswer" value="Security Question Answer:" for="AccountStatusId"/>
+                    <apex:outputLabel id="sectionItemAnswer" value="***" for="AccountStatusId"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="sectionItemCancelReason" rendered="{!$Profile.Name != 'PF Outsource User'}">
+                    <apex:outputLabel id="sectionItemCancelReason" value="Cancel Reason:" for="CancelReason"/>
+                    <apex:inputField id="CancelReason" value="{!Lead.Manual_Cancel_Picklist__c}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemCancelConfirm" rendered="{!$Profile.Name != 'PF Outsource User'}">
+                    <apex:commandButton action="{!save}" value="Cancel Lead" id="btnCancel" onclick="javascript: cancelLead1(); return false;"/>
+                </apex:pageblockSectionItem>
+
+                <!-- Outsorce only have 1 possible Cancel Reason -->
+                <apex:pageblockSectionItem id="sectionItemCancelReason2" rendered="{!$Profile.Name == 'PF Outsource User'}">
+                    <apex:commandButton action="{!save}" value="Cancel Loan" id="btnCancel2" onclick="javascript: cancelLead2(); return false;"/>
+                    <apex:outputLabel id="CancelReason2" value="Cancel Reason: Withdrawn Application (Applicant Request)"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemCancelConfirm2" rendered="{!$Profile.Name == 'PF Outsource User'}">
+                </apex:pageblockSectionItem>
+
+                <script type="text/javascript">
+                    
+                    
+                    
+                    function SetSSN(result){
+                        var ssn  = (result.split(':')[0] != '') ? result.split(':')[0] : "none on record";
+                        var tussn  = (result.split(':')[1] != '') ? result.split(':')[1] : "none on record";
+                        var answer = (result.split(':')[2] != '') ? result.split(':')[2] : "";
+
+                        document.getElementById('{!$Component.sectionItemSSN}:sectionItemSSN').innerHTML = ssn;
+                        document.getElementById('{!$Component.sectionItemTuSSN}:sectionItemTuSSN').innerHTML = tussn;
+                        document.getElementById('{!$Component.sectionItemAnswer}:sectionItemAnswer').innerHTML = answer;
+                    }
+
+                    function showSSN()
+                    {
+
+                        var key = '{!$User.Username}'.replace(".pfsandbox", "") + ":" + '{!$User.Peerform__c}'
+                        var borrowerId = '{!Lead.UserId__c}';
+
+                        PeerformJsApiClient.GetUserSSNs(key, borrowerId, SetSSN);
+                    }
+
+                    function impersonate()
+                    {
+                        var adminEmail = calcMD5('{!$User.Username}');
+                        var userId = '{!Lead.UserId__c}';
+                        var SForceUrl = encodeURIComponent('{!$Api.Enterprise_Server_URL_250}');
+                        var sessionId = '{!$Api.Session_ID}';
+
+
+                        var url = getBaseUrl() + 'admin/salesforce/sforcei/' 
+                        + '?aid=' + adminEmail 
+                        + '&uid=' + userId
+                        + '&url=' + SForceUrl
+                        + '&sid=' + sessionId;
+
+                        window.open(url,'','height=768,width=1224,scrollbars=no,menubar=no,resizable=yes,toolbar=no,location=no,status=no');
+                    }
+
+                    function cancelLead1()
+                    {
+                        var optionSelected = j$('#' + '{!$Component.sectionItemCancelReason}:CancelReason'.replace(/:/g, '\\:')).val();
+
+                        cancelLead(optionSelected);
+                    }
+
+                    function cancelLead2()
+                    {
+                        // This will need to be updated if the cancel reason text on our DB ever changes
+                        var optionSelected = 'Withdrawn Application (Applicant Request)';
+
+                        cancelLead(optionSelected);
+                    }
+
+                    function cancelLead(optionSelected)
+                    {
+                        if (optionSelected === '')
+                        {
+                            alert ('Please select a Cancel Reason');
+                        }
+                        else
+                        {
+                            var confOk = confirm("Are you sure you want to cancel this Lead?");
+                            if (confOk)
+                            {
+                                var data = calcMD5('{!$User.Username}');
+                                var urlServer = encodeURIComponent('{!$Api.Enterprise_Server_URL_250}');
+                                var url = getBaseUrl() + 'admin/salesforce/SForcePL.ashx'
+                                + '?source=' + data 
+                                + '&op={!Lead.UserId__c}'
+                                + '&opid={!Lead.Id}'
+                                + '&sid=' + '{!$Api.Session_ID}' 
+                                + '&url=' + urlServer 
+                                + '&rd=bf9508f0314e2cc6a6ed82c5054b18ae' 
+                                + '&cr=' + optionSelected;
+                                
+                                invokeGetAjax(url, handler);
+                            }
+                        }
+                    }
+
+                    function handler(invocation) {
+                        var response = invocation.responseText;
+                        if (response === 'True')
+                            window.top.location='/{!Lead.Id}';
+                        else
+                            alert ('Call to Peerform Failure, check the loan status in the Admin. Error message: ' + response);
+                    } 
+                </script>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

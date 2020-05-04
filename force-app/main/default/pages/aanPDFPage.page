@@ -1,0 +1,41 @@
+<apex:page id="aanPDFPage" standardController="fsCore__Lending_Application__c" 
+           extensions="AANPDFController" renderAs="pdf" tabStyle="fsCore__Lending_Application__c"
+           showHeader="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false">
+
+    <head>
+        
+        
+        <apex:composition template="sfsPDFTemplate">
+            <apex:define name="pdfHeader"></apex:define>
+            <apex:define name="pdfFooter"></apex:define>
+            
+            
+            <!-- Logo -->
+            <apex:define name="logo">
+                <img src="{!companyLogoURL}" class="center"/>
+            </apex:define>
+
+            <!-- Contract Info -->
+            <apex:define name="recordInfo">
+                 <table class="record-info-table">
+                    <tbody>
+                        <apex:repeat value="{!$ObjectType.fsCore__Branch_Setup__c.FieldSets.fsCore__PDF_Document_Fields}" var="branchField">
+                            <tr><td><apex:outputField value="{!mBranch[branchField.fieldPath]}"/></td></tr>
+                        </apex:repeat>
+                        <tr><td> <span>{!todayDate}</span> </td></tr>
+                    </tbody>
+                </table>
+            </apex:define>
+  
+
+            <!-- Repayment Detail Table -->
+            <apex:define name="pdfContent">
+              
+        <apex:outputText value="{!mReportContent}" escape="false"></apex:outputText>
+        <!--<apex:outputText value="{!mCoReportContent}" escape="false"></apex:outputText>-->
+                
+            </apex:define>
+            
+        </apex:composition>
+    </head>
+</apex:page>

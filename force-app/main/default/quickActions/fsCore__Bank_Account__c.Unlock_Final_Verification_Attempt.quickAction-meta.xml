@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Unlock user for Final Bank Verification Attempt</description>
+    <fieldOverrides>
+        <field>Is_VCL_Bank_Verification_Locked__c</field>
+        <formula>false</formula>
+    </fieldOverrides>
+    <label>Unlock Final Verification Attempt</label>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <quickActionLayout>
+        <layoutSectionStyle>TwoColumnsLeftToRight</layoutSectionStyle>
+        <quickActionLayoutColumns>
+            <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
+                <field>Is_VCL_Bank_Verification_Locked__c</field>
+                <uiBehavior>Readonly</uiBehavior>
+            </quickActionLayoutItems>
+        </quickActionLayoutColumns>
+        <quickActionLayoutColumns/>
+    </quickActionLayout>
+    <successMessage>Success!</successMessage>
+    <type>Update</type>
+</QuickAction>

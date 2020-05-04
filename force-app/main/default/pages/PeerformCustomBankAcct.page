@@ -1,0 +1,81 @@
+<apex:page standardController="Bank_Account__c">
+    <apex:includeScript value="/apex/GlobalJS?core.apexpages.devmode.url=1"/>
+    <apex:includeScript value="{!$Resource.JQuery}"/>
+    <apex:includeScript value="{!$Resource.tools}" />
+    <apex:includeScript value="{!$Resource.PeerformJsApiClient}" />
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+    </script>
+    <style>
+        #loading{
+            padding-top: 2% !important;
+            padding-left: 40% !important;
+        }
+    </style>
+    <apex:form id="changeStatusForm">
+        <apex:pageBlock mode="edit" id="thePageBlock">
+            <apex:pageBlockSection columns="2">
+
+                <apex:pageblockSectionItem id="filler1">
+                    <apex:outputLabel id="sectionItemFillerLabel" value="" for="AccountStatusId"/>
+                    <apex:commandButton value="Unblock Bank Account" id="btnUnblockBank" onclick="javascript: unblockBank(); return false;"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="sectionItemShowNumbersButton">
+                    <apex:commandButton value="Display Information" id="btnShowNumbers" onclick="javascript: showNumbers(); return false;" rendered="{!$Profile.Name != 'PF Outsource User'}"/>
+                    <apex:outputLabel id="sectionItemRoutingNum" value="Routing Number: ***********" for="AccountStatusId" rendered="{!$Profile.Name != 'PF Outsource User'}"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="filler2">
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="sectionItemAccountNum">
+                    <apex:outputLabel id="sectionItemFillerLabelAccountNum" value="" for="AccountStatusId" rendered="{!$Profile.Name != 'PF Outsource User'}"/>
+                    <apex:outputLabel id="sectionItemAccountNum" value="Account Number: ***********" for="AccountStatusId" rendered="{!$Profile.Name != 'PF Outsource User'}"/>
+                </apex:pageblockSectionItem>
+
+                <script type="text/javascript">
+                    
+                    function SetNumbers(result){
+                        var accountNum  = (result.split(':')[0] != '') ? result.split(':')[0] : "none on record";
+                        var routingNum  = (result.split(':')[1] != '') ? result.split(':')[1] : "none on record";
+                        
+                        document.getElementById('{!$Component.sectionItemShowNumbersButton}:sectionItemRoutingNum').innerHTML = "Routing Number: " + routingNum;
+                        document.getElementById('{!$Component.sectionItemAccountNum}:sectionItemAccountNum').innerHTML = "Account Number: " + accountNum;
+                    }
+
+                    function showNumbers()
+                    {
+                        var key = '{!$User.Username}'.replace(".pfsandbox", "") + ":" + '{!$User.Peerform__c}'
+                        var bankId = '{!Bank_Account__c.BankAccountId__c}';
+
+                        PeerformJsApiClient.GetBankAccountNumbers(key, bankId, SetNumbers);
+                    }
+                    // { !
+                    //REQUIRESCRIPT("/soap/ajax/29.0/connection.js")}
+
+                    function good()
+                    {
+                        /*
+                        var ba = new sforce.SObject("Bank_Account__c");
+                        ba.id = "{!Bank_Account__c.Id}";
+                        ba.Bank_Account_Status__c = "Pending";
+                        sforce.connection.update([ba]);
+                        */
+                        alert("Account unblocked. Note: Bank info on SF is only updated once a day)");
+                        window.location.reload();
+                    }
+
+                    function unblockBank()
+                    {
+                        var key = '{!$User.Username}'.replace(".pfsandbox", "") + ":" + '{!$User.Peerform__c}'
+                        var bankId = '{!Bank_Account__c.BankAccountId__c}';
+
+                        PeerformJsApiClient.UnblockBank(key, bankId, good);
+                    }
+
+                </script>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

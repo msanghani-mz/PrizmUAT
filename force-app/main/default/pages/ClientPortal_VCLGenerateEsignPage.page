@@ -1,0 +1,25 @@
+<apex:page controller="ClientPortal_GenerateEsignPDFVCLCntrl" renderAs="PDF">
+    <html>
+        <head>
+            <style>
+                .prompt-SemiBold{
+                    font-family: Prompt-SemiBold !important;  
+                }
+            </style>
+        </head>
+        <body>
+            
+            <div class="prompt-SemiBold">
+                {! vclContentToShowMap['header'] }
+            </div><br/><br/>
+            <div>
+                <apex:outputText escape="false" value="{! vclContentToShowMap['body'] }" />
+            </div>
+        </body> <br/> <br/>
+        {!lendingAppln.Name} <br/>
+        {!borrowerEmail} <br/>
+        {!currentDate} <br/>
+        {!userIpAddress} <br/>
+    </html>    
+    
+</apex:page>

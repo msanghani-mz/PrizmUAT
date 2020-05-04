@@ -1,0 +1,55 @@
+<apex:page id="opportunityAppPage" standardController="Opportunity" extensions="SendToDocuSignController"
+           showHeader="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false"  action="{!onLoad}">
+    
+    <head>
+        <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+        <apex:slds />
+    </head>
+
+    <body>
+        <div class="slds-scope" >
+            <apex:form styleClass="slds-p-around_small" id="MainForm">
+                <div style="{!IF(NOT(mEnvelopeAlreadySent), 'display:block', 'display:none')}">
+                <div style="{!IF(mValidationsPassed, 'display:block', 'display:none')}">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-align_absolute-left slds-size_1-of-1 slds-p-around_small" >
+                            <h2 class="slds-text-heading_small">Your eSignature request is being sent to DocuSign API!</h2>
+                        </div>
+                        <div class="slds-col slds-align_absolute-left slds-size_1-of-1 slds-p-around_small"  >
+                            <p class="slds-text-body_regular"><strong>The DocuSign EnvelopeId:</strong>{!mEnvelopeId}</p>
+                        </div>                 
+                        <!--<div class="slds-col slds-align_absolute-right slds-size_1-of-1 slds-p-around_large"  >
+                            <apex:commandButton value="Send Again" action="{!SendNow}" styleClass="slds-button slds-button_brand"/>
+                        </div>-->
+                    </div>
+                </div>
+                <div style="{!IF(NOT(mValidationsPassed), 'display:block', 'display:none')}">
+                    <div class="slds-col slds-align_absolute-left slds-size_1-of-1 slds-p-around_small"  >
+                          <p class="slds-text-body_regular"><strong><span style="white-space: pre-line; color:red">{!mValidationFailureMessage}</span></strong></p>
+                    </div>
+                </div>
+                </div>
+                <apex:actionStatus id="waitActionStatus">
+                    <apex:facet name="start">
+                        <fsCore:fsSpinner spinnerSize="medium"/>
+                    </apex:facet>
+                </apex:actionStatus>                     
+                <div style="{!IF(mEnvelopeAlreadySent, 'display:block', 'display:none')}">
+                    <div style="{!IF(NOT(mLastEnvelopeCompleted), 'display:block', 'display:none')}">
+                        <div class="slds-col slds-align_absolute-left slds-size_1-of-1 slds-p-around_small" >
+                            <h2 class="slds-text-heading_small">The loan application document, Envelope Id: <strong>{!mEnvelopeId}</strong> has already been sent to the customer and the current status is <strong>{!mEnvelopeStatus}</strong>, Please click on the DocuSign status record to resend the email or mark the existing envelope as void.</h2>
+                        </div>
+                    </div>
+                    <div style="{!IF(mLastEnvelopeCompleted, 'display:block', 'display:none')}">
+                        <div class="slds-col slds-align_absolute-left slds-size_1-of-1 slds-p-around_small" >
+                            <h2 class="slds-text-heading_small">The loan application document, Envelope Id: <strong>{!mEnvelopeId}</strong> has already been sent to the customer and the current status is <strong>{!mEnvelopeStatus}</strong>, Please press the send the new envelope button to send the new envelope.</h2>
+                        </div>
+                        <div class="slds-col slds-align_absolute-right slds-size_1-of-1 slds-p-around_large"  >
+                            <apex:commandButton value="Send The New Envelope" action="{!SendAfterCompletedEnvelope}" styleClass="slds-button slds-button_brand" status="waitActionStatus" reRender="MainForm"/>
+                        </div>                        
+                    </div>                    
+                </div>   
+            </apex:form>
+        </div>
+    </body>    
+</apex:page>

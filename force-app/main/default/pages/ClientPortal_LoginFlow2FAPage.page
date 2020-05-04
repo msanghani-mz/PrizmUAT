@@ -1,0 +1,509 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false"
+            controller="ClientPortal_LoginFlow2FAPageCntrl"
+            action="{!updateUserAndRedirect}">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <apex:slds />
+
+  <style>
+    @font-face {
+      font-family: Prompt-Regular;
+      src: url("{!URLFOR($Resource.ClientPortal_CustomFonts, '/Prompt/Prompt-Regular.ttf')}");
+    }
+
+    .custom-background {
+      background-size: cover;
+      width: 100%;
+      position: absolute;
+    }
+
+    .body-content {
+      padding:1em;
+      text-align: left;
+      min-width: 280px;
+      max-width: 390px;
+      margin: auto;
+      display: inline-block;
+      position: relative;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.8);
+      text-decoration: none;
+      vertical-align: middle;
+      z-index: 0;
+      background: #232526;
+      background: -webkit-linear-gradient(to right, #414345E0, #232526E0);
+      background: linear-gradient(to right, #414345E0, #232526E0);
+      border-radius:0px;
+    }
+
+    .custom-button {
+      width: 50%;
+      margin-top: 12px;
+      margin-bottom: 5px;
+      background-color: #AEDFD0;
+      border-color: #AEDFD0;
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      border: none !important;
+      white-space: nowrap;
+      padding: 16px 10px;
+      font-size: 18px !important;
+      color: #254f92 !important;
+    }
+
+    .fixed-header {
+    width: 100%;
+    position: fixed;
+    z-index: 5;
+    top: 0;
+    }
+
+    button:hover {
+      background-color: #a4dbca !important;
+    }
+
+    button:active {
+      background-color:#0f99a3 !important;
+    }
+
+    .messageClass-error {
+      background-color : red !important;
+      color : white !important;
+    }
+
+    .messageClass-success {
+      background-color : green !important;
+      color : white !important;
+    }
+
+    .messageClass-warning {
+      background-color : #eaa754 !important;
+      color : white !important;
+    }
+
+    .messageClass {
+      background-color : black !important;
+    }
+
+    .imageDiv {
+      margin-top:-201px;
+    }
+    .custom-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 2.5rem;
+    }
+    .a2 {
+      color: #FFFFFF !important;
+    }
+    .a1 {
+      color: black !important;
+      font-family: Prompt-Regular;
+      font-size:12px;
+    }
+    .slds-scope {
+      line-height: 1;
+    }
+    .custom-body {
+  padding-top: 100px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 30px;
+  min-width: 280px;
+  max-width: 500px;
+  display: inline-block;
+  margin: 0 auto;
+  position: relative;
+  margin-top: 20px;
+    }
+    .slds-icon-action-call {
+      background-color: #F5B554 !important;
+    }
+  </style>
+  <apex:form id="loginForm">
+    <div class="custom-background body-height"
+          style="{!('background: url(' + uiConfiguration.bodyBackgroundImageURL + ')
+                  0% 0%/cover no-repeat; height:55rem;')}">
+      <!-- Header Start -->
+      <div class="fixed-header">
+        <div id="UnauthenticatedHeaderContainer">
+          <div class="newHeader" style="line-height:4rem;">
+            <div class="slds-grid slds-wrap custom-layout min-div-height"
+                  style="background-color:#003643;">
+              <div class="slds-p-around_xx-small slds-col slds-size_1-of-2 slds-small-size_6-of-12
+                          slds-medium-size_6-of-12 slds-large-size_6-of-12" >
+                <apex:image url="{!$Resource.ClientPortal_VersaraCompanyLogoNav}"
+                            width="150" height="150"
+                            style="padding-top:10px; padding-left:24px;"/>
+              </div>
+              <div class="slds-col slds-size_1-of-2 slds-small-size_6-of-12
+                          slds-medium-size_6-of-12
+                          slds-large-size_6-of-12" >
+                <div>
+                  <span style="float:right">
+                    <span style="margin-right: 0.70rem; padding-right:24px;">
+                      <span class="slds-p-left_medium support-phone a2">
+                        <apex:image url="{!$Resource.mobileIcon}" width="30" height="30"
+                                    style="padding-top:0px;"/>
+                        <a class="a2"
+                            href="{!'tel:' + uiConfiguration.portfolio.Support_Phone_Number__c}">
+                          {!uiConfiguration.portfolio.Support_Phone_Number__c}
+                        </a>
+                      </span>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div style="background-color: #8C9EA3;height: 0.6rem;">
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Header End -->
+
+      <!-- Body Start -->
+      <div class="slds-grid slds-wrap body-height custom-body" >
+        <div class="slds-col slds-size_1-of-1 slds-small-size_12-of-12
+                          slds-medium-size_12-of-12
+                          slds-large-size_12-of-12 slds-box" style="border: 0px solid #d4d4d4;background-color: rgb(2, 73, 92);opacity: 1;
+                margin-bottom: 15px;">
+          <apex:outputPanel rendered="{!actionString == 'modeSelection'}">
+            <span class="slds-p-around_small"
+                  style="float:right; font-family: Prompt-Regular; line-height: normal;">
+              <div style="color: #F5B554; font-size: 22px; text-align:center;
+                          font-family: Prompt-Regular;">
+                For your security, we need to confirm your identity
+              </div>
+              <div style="color:white; font-size: 16px;
+                          font-family: Prompt-Regular;">
+                <div class="slds-p-around_medium"
+                      style="text-align: center">
+                  Please select your preferred method:
+                </div>
+                <apex:outputPanel rendered="{!phoneNumberToUser != null}">
+                  <div style="padding-bottom: 4px;">
+                    <input type="radio" name="validation" value="Mobile" checked="true"
+                            id="smsRadioOption">
+                    <label for="smsRadioOption"
+                            style="font-family: Prompt-Regular;
+                                    font-size: 16px;
+                                    text-align: left !important;">
+                      Send an SMS to:&nbsp;
+                        <apex:outputText value="***-***-{!RIGHT(phoneNumberToUser,4)}"/>
+                    </label>
+                    </input>
+                  </div>
+                  <!--<div style="padding-bottom: 4px;">
+                    <input type="radio" name="validation" value="Phone Call"
+                          id="phoneCallRadioOption">
+                      <label for="phoneCallRadioOption"
+                              style="font-family: Prompt-Regular;
+                                      font-size: 14px;
+                                      text-align: left !important;">
+                        Receive a call to:&nbsp;
+                          <apex:outputText value="***-***-{!RIGHT(userInstance.MobilePhone,4)}"/>
+                      </label>
+                    </input>
+                  </div> -->
+                  <div>
+                    <input type="radio" name="validation" value="Email" id="emailRadioOption1">
+                      <label for="emailRadioOption1"
+                          style="font-family: Prompt-Regular;
+                                  font-size: 16px;
+                                  text-align: left !important;">
+                        Send an Email to: {!encryptedEmail}
+                      </label>
+                    </input>
+                  </div>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!phoneNumberToUser == null ||
+                                                phoneNumberToUser == ''}">
+                  <div>
+                    <input type="radio" name="validation" value="Email" id="emailRadioOption2">
+                      <label for="emailRadioOption2"
+                          style="font-family: Prompt-Regular;
+                                  font-size: 16px;
+                                  text-align: left !important;">
+                        Send an Email to: {!encryptedEmail}
+                      </label>
+                    </input>
+                  </div>
+                </apex:outputPanel>
+              </div>
+            </span>
+            <div align="center">
+              <button class="slds-m-top_large custom-button"
+                style="{!'background-color:'+ uiConfiguration.bodyUiConfig.Action_Button_Color__c}"
+                type="button" onclick="getSelectedMethod()">
+                Send Now
+              </button>
+            </div>
+            <br/>
+            <div align="center">
+              <span style="font-family: Prompt-Regular;
+                            font-size: 16px;
+                            text-align:center;
+                            color: #FFFFFF"
+                    class="slds-p-around_medium">
+                *Carrier rates may apply
+              </span>
+            </div>
+            <!--
+              <div style="text-align:right" class="slds-p-top_medium">
+                <a style="color:white;font-size:1.2em;"
+                    onclick="sendAction('agentSentCodeVerification')">
+                  I have a code from the agent
+                </a>
+              </div>
+            -->
+          </apex:outputPanel>
+
+          <apex:outputPanel rendered="{!actionString == 'codeVerification'}">
+            <span class="slds-p-around_small" style="float:right;">
+              <div style="color: #F5B554; font-size: 22px;
+                          text-align:center; font-family: Prompt-Regular;">
+                Your verification code has been sent.
+                <br/>
+              </div>
+              <div style="font-size:16px; text-align: center; font-family: Prompt-Regular;"
+                    class="slds-p-top_large">
+                <div style="color: white;">
+                  The code will be active for the next 60 minutes
+                </div>
+                <br/>
+                <div class="slds-form-element__help slds-p-around_x-small" style="font-size: 16px; color:#ffffff;background-color: #d4504c;">
+                  {!exceptionText}
+                </div>
+                <br/>
+                <apex:inputText value="{!enteredText}" styleClass="slds-input"/>
+              </div>
+            </span>
+            <br/>
+            <div align="center"
+                  style="font-size:14px; font-family: Prompt-Regular; text-align: center">
+              <button class="custom-button"
+                      style="{!'background-color:'+ uiConfiguration.bodyUiConfig.Action_Button_Color__c}"
+                      type="button" onclick="validateCode()">
+              Enter
+              </button>
+            </div>
+            <div style="color: white; font-size: 16px;
+                        text-align: center; font-family: Prompt-Regular; line-height: 1.5rem;"
+                  class="slds-p-top_large">
+              <div style="color:white;">
+                Haven&#39;t received your code?
+              </div>
+              <div class="footer-text-color" style="color:white;">
+                Please check your spam folder
+              </div>
+              <br/>
+              <h5>
+                <a href="javascript:void(null);" onclick="getSelectedMethod()"
+                    style="color:white;">
+                  <u>Resend My Code</u>
+                </a>
+              </h5>
+            </div>
+          </apex:outputPanel>
+
+          <apex:outputPanel rendered="{!actionString == 'verificationSuccess'}">
+            <span class="slds-p-around_small" style="float:right;">
+              <div style="color: #F5B554; font-size: 22px;
+                          text-align:center; font-family: Prompt-Regular;">
+                Verification Successful!
+                <br/>
+              </div>
+              <div style="font-size:16px; text-align: center; font-family: Prompt-Regular;"
+                    class="slds-p-top_large">
+                <div style="color: white;">
+                  Your authentication has been successful! Please sign in to your account to proceed with your application.
+                </div>
+                <br/>
+              </div>
+            </span>
+            <br/>
+            <div align="center"
+                  style="font-size:14px; font-family: Prompt-Regular; text-align: center">
+              <button class="custom-button"
+                      style="{!'background-color:'+ uiConfiguration.bodyUiConfig.Action_Button_Color__c}"
+                      type="button" onclick="navigateToLoginJs();">
+                Log In
+              </button>
+            </div>
+            <div style="color: white; font-size: 14px;
+                        text-align: center; font-family: Prompt-Regular; line-height: 1.5rem;"
+                  class="slds-p-top_small">
+            </div>
+          </apex:outputPanel>
+
+
+          <apex:outputPanel rendered="{!actionString == 'agentSentCodeVerification'}">
+            <span class="slds-p-around_small" style="float:right;">
+              <div style="font-size:22px; text-align:center; font-family: Prompt-Regular;">
+                Verification code has been sent by agent, enter code below
+                <br/>
+              </div>
+              <div style="color:white; font-size:16px;
+                          text-align: center; font-family: Prompt-Regular;"
+                    class="slds-p-top_large">
+                <div>
+                  The code will be active for next 60 minutes
+                </div>
+                <div style="color:red;">
+                  {!exceptionText}
+                </div>
+                <apex:inputText value="{!enteredText}" styleClass="slds-input"/>
+              </div>
+            </span>
+            <div align="center" style="font-size:14px;">
+              <button class="custom-button"
+                      style="{!'background-color:'+ uiConfiguration.bodyUiConfig.Action_Button_Color__c}"
+                      type="button" onclick="validateAgentCode()">
+                Enter
+              </button>
+            </div>
+            <div style="color:white; font-size: 16px; text-align: center;
+                        font-family: Prompt-Regular;"
+                  class="slds-p-top_large">
+              <div>
+                Haven&#39;t Received Your Code?
+              </div>
+              <div class="footer-text-color">
+                Please check your spam folder
+              </div>
+            </div>
+          </apex:outputPanel>
+        </div>
+      </div>
+      <!-- Footer Start-->
+      <div class="custom-footer">
+        <apex:includeScript value="{!$Resource.ClientPortal_FullStory}"/>
+        <div class="slds-align_absolute-center" style="padding: 0.8rem;margin-bottom: 8rem;margin-top:-175px">
+          <img src="{!uiConfiguration.footerCompanyLogoImageURL}" width="100" height="100"/>
+        </div>
+          
+        <div class="imageDiv"
+              style="{!('background: url(' + uiConfiguration.footerBackgroundImageURL + ')
+                              0% 0%/cover no-repeat fixed #f4f4f4; height:17rem; ')}">
+          <br/>
+          <div class="slds-align_absolute-center slds-p-left_medium slds-p-right_medium
+                      footer-background">
+            <p class="footer-content"
+                style="margin-top: 60px; font-size: 12px; font-family: Prompt-Regular;
+                      line-height: 1.5em;">
+              <apex:outputText value="{!uiConfiguration.portfolio.Footer_Content__c}" escape="false"/>
+            </p>
+          </div>
+          <div class="slds-align_absolute-center">
+            <a href="{!uiConfiguration.portfolio.Privacy_Policy_URL__c}" target="_blank"
+                class="slds-p-around_small footer-content-link a1" >
+              <u>Privacy Notice</u>
+            </a>
+            <a href="{!uiConfiguration.portfolio.Terms_of_Use__c}" target="_blank"
+                class="slds-p-around_small footer-content-link a1">
+              <u>Terms of Use</u>
+            </a>
+          </div>
+          <div class="slds-align_absolute-center">
+            <p class="footer-content" style="font-size:12px;font-family: Prompt-Regular;">
+              {!uiConfiguration.portfolio.Footer_Copyright_Content__c}
+            </p>
+          </div>
+          <!-- Social Media Link -->
+          <div class="slds-align_absolute-center">
+            <a href="{!uiConfiguration.portfolio.Facebook_URL__c}" target="_blank"
+                class="slds-p-around_small">
+              <img src="{!$Resource.FacebookIcon}" width="40" height="40"/>
+            </a>
+            <a href="{!uiConfiguration.portfolio.LinkedIn_URL__c}" target="_blank"
+              class="slds-p-around_small">
+              <img src="{!$Resource.LinkedInIcon}" width="40" height="40"/>
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- Footer End -->
+    </div>
+    <!-- Page End -->
+
+    <!-- Toast message block -->
+    <div id="toastmessage_container" class="slds-notify_container" style="display:none;">
+      <div id="message_toast-theme" class="slds-notify slds-notify_toast"
+            style="min-width: 0px" role="alert">
+        <span class="slds-assistive-text">
+          Success
+        </span>
+        <a class="slds-button slds-notify__close slds-button--icon-inverse"
+            onclick="hideMessage_Toast();" >
+          <span style="font-family: Prompt-Regular;;">
+            X
+          </span>
+        </a>
+        <div id="toastmessage-content" class="slds-notify__content"
+              style="font-family: Prompt-Regular;;min-width: 0px;">
+        </div>
+      </div>
+    </div>
+    <!-- END OF Toast message block -->
+
+    <apex:actionFunction name="sendAction" action="{!sendVerificationCodeToClient}"
+                          reRender="loginForm" oncomplete="rendertoastForEmail();" >
+      <apex:param name="selctedMode" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="validateCode" action="{!validateCode}" reRender="loginForm" />
+    <apex:actionFunction name="validateAgentCode" action="{!validateAgentCode}"
+                          reRender="loginForm"/>
+
+    <apex:actionFunction name="navigateToLoginJs" action="{!navigateToLogin}"/>
+  </apex:form>
+
+  <script type="text/javascript">
+    var selectedValue = '';
+    function getSelectedMethod() {
+      let input = document.querySelector('input[name=validation]:checked');
+      if(input) {
+        selctedValue = input.value;
+      }
+      sendAction(selctedValue);
+    }
+    function rendertoastForEmail() {
+      if(selctedValue == 'Email') {
+        showMessage_Toast('Your code has been sent, Please check your spam folder if you do not see the email',
+                          'warning');
+      }
+      if(selctedValue == 'Mobile') {
+        showMessage_Toast('Your code has been sent, Please check your messages',
+                          'warning');
+      }
+    }
+
+    /* Toast message script */
+    function showMessage_Toast(message, type) {
+      if(message) {
+        var dafaultTheme = 'slds-theme_';
+        var dafaultTheme = 'messageClass-' + type;
+        var messageContainer = document.getElementById('toastmessage_container');
+        var messageTheme = document.getElementById('message_toast-theme');
+        var messageContent = document.getElementById('toastmessage-content');
+        messageContent.innerHTML = message;
+        messageContent.className = dafaultTheme;
+        messageTheme.className = 'slds-notify slds-notify_toast ' + dafaultTheme;
+        messageContainer.style.display = 'block';
+        setTimoutClose();
+      }
+    }
+    function hideMessage_Toast() {
+      document.getElementById('toastmessage_container').style.display = 'none';
+    }
+
+    function setTimoutClose() {
+      var timeId = window.setTimeout(function (){
+        hideMessage_Toast();
+      }, 5000);
+    }
+    /* End of Toast message script */
+  </script>
+</apex:page>

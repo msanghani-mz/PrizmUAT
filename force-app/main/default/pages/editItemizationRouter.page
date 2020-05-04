@@ -1,0 +1,13 @@
+<!--
+  - Copyright (c) 2017 FinancialSpectra Pty Ltd
+  - All rights reserved.
+  - 
+  - Page Name    - editItemizationRouter
+  -
+  -
+  -->
+<apex:page id="editItemizationRouter" standardController="fsCore__Lending_Application__c"
+           extensions="ItemizationEditRouterController" tabStyle="fsCore__Lending_Application__c"
+           standardStylesheets="true" applyHtmlTag="true" docType="html-5.0"  action="{!redirectToComponent}">
+    <p>Redirecting...</p>
+</apex:page>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Action to raise a request to withdraw the application</description>
+    <fieldOverrides>
+        <field>fsCore__Application_Status__c</field>
+        <formula>IF(RecordType.DeveloperName = &quot;VCL_Loan&quot;,&quot;Withdrawn&quot;, &quot;Withdrawal Requested&quot;)</formula>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>fsCore__Is_Application_Read_Only__c</field>
+        <formula>IF(RecordType.DeveloperName = &quot;VCL_Loan&quot;,true,False)</formula>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>Is_Withdraw_Requested__c</field>
+        <formula>IF(RecordType.DeveloperName = &quot;VCL_Loan&quot;, false,true)</formula>
+    </fieldOverrides>
+    <label>Withdraw Request</label>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <quickActionLayout>
+        <layoutSectionStyle>TwoColumnsLeftToRight</layoutSectionStyle>
+        <quickActionLayoutColumns>
+            <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
+                <field>Withdraw_Reason__c</field>
+                <uiBehavior>Edit</uiBehavior>
+            </quickActionLayoutItems>
+            <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
+                <field>Withdraw_Comments__c</field>
+                <uiBehavior>Edit</uiBehavior>
+            </quickActionLayoutItems>
+        </quickActionLayoutColumns>
+        <quickActionLayoutColumns/>
+    </quickActionLayout>
+    <successMessage>Withdraw Request has been submitted successfully.</successMessage>
+    <type>Update</type>
+</QuickAction>

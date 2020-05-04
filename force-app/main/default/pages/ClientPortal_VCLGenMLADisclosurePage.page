@@ -1,0 +1,112 @@
+<apex:page controller="ClientPortal_GenerateMlaPDFVCLCntrl" renderAs="PDF">
+    <html>
+        <head>
+            <style>
+                table, td, th {
+                border: 1px solid black;
+                }
+                table {
+                border-collapse: collapse;
+                width: 100%;
+                }
+                th {
+                text-align: left;
+                }
+            </style>
+        </head>
+    </html>
+    <body>
+        <P Style="text-align: center;font-weight: bold;font-size:25px;">MILITARY LENDING ACT</P>
+        <br/>
+        <P Style="text-align: center;font-weight: bold;font-size:25px;">NOTICE AND DISCLOSURE STATEMENT</P>
+        <br/>
+        <p style="text-align: left;"><i>The Military Lending Act (MLA) places limits by the federal government on terms of consumer credit extended 
+            to certain servicemembers and their dependents. Please review the information contained in this document and 
+            print a copy for your reference.</i>
+        </p>
+        <table style="width:100%">
+            <tr style="text-align: left;">
+                <td><b>Notice Date: </b><apex:outputText escape="false" value="{!lendingApplnWrapper.noticeDate}" /></td>
+                <td></td>
+                <td><b>Application # : </b><apex:outputText value="{!lendingApplnWrapper.applicationNumber}" /></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr style="text-align: left;">
+                <td><b>Lender:</b><br/><apex:outputText escape="false" value="{!lendingApplnWrapper.lenderAddress}" /></td>
+                <td></td>
+                <td>
+                    <b>Borrower Name and Address:</b><br/>
+                    <apex:outputText escape="false" value="{!lendingApplnWrapper.borrowerName}" />
+                    <br/>
+                    {!lendingApplnWrapper.borrowerAddress}
+                </td>
+            </tr>
+        </table>
+        <p  Style="text-align: left;font-weight: bold;">Your payment schedule will be:</p>
+        <table Style="border-collapse: collapse;width: 100%;">
+            <tr Style="border: 1px solid black;">
+                <th Style="border: 1px solid black;text-align: center;"><span Style="font-weight: 300;">Number of Payments</span></th>
+                <th Style="border: 1px solid black;text-align: center;"><span Style="font-weight: 300;">Amount of Payments</span></th>
+                <th colspan="2" Style="border: 1px solid black;text-align: right;text-align: center;"><span Style="font-weight: 300;">When Payments Are Due</span></th>
+                <!-- <th Style="border: 1px solid black;text-align: left;"><span Style="font-weight: 300;">Are Due</span></th>-->
+            </tr>
+            <tr>
+                <td Style="border: 1px solid black;background-color: #D3D3D3;text-align: center;">{!lendingApplnWrapper.numberOfRepayments}</td>
+                <td Style="border: 1px solid black;background-color: #D3D3D3;text-align: center;">
+                    <apex:outputText value="${0, number, ###,###,###,##0.00}">
+                        <apex:param value="{!lendingApplnWrapper.paymentAmount}" />
+                    </apex:outputText>
+                </td>
+                <td Style="border: 1px solid black;background-color: #D3D3D3;text-align: center;">Starting, {!lendingApplnWrapper.paymentCycle}</td>
+                <td Style="border: 1px solid black;background-color: #D3D3D3;text-align: center;">
+                    <apex:outputText value="{0,date,MM-dd-yyyy}">
+                        <apex:param value="{!lendingApplnWrapper.paymentStartDate}"/>
+                    </apex:outputText>
+                </td>
+            </tr>
+        </table>
+        <br/><br/>   
+        <p>
+            <strong>STATEMENT OF THE MILITARY ANNUAL PERCENTAGE RATE (MAPR):</strong><br/>
+            Federal law provides important protections to members of the Armed Forces and their dependents relating to extensions of 
+            consumer credit. In general, the cost of consumer credit to a member of the Armed Forces and his or her dependent may not 
+            exceed an annual percentage rate of 36%. This rate must include, as applicable to the credit transaction or account: the 
+            costs associated with credit insurance premiums; fees for ancillary products sold in connection with the credit transaction; 
+            any application fee charged (other than certain application fees for specified credit transactions or accounts); and any 
+            participation fee charged (other than certain participation fees for a credit card account).
+        </p>
+        <br/>
+        <p>
+            <strong>ORAL DISCLOSURE OF TERMS PROVIDED BY VERSARA</strong><br/>
+            Contact our toll-free number at <strong>855-397-3392</strong> for oral disclosure of a statement of the MAPR and a clear 
+            description of the payment obligation. Versara will provide you with a verbal description of your obligation to make regular 
+            monthly payments for the term of your loan in accordance with your Loan Agreement. Our Support team is available during the 
+            hours of <strong>9:00 AM to 6:00 PM Eastern, Monday through Friday</strong>. To receive all required disclosures over the phone, 
+            or to discuss the terms of your loan, <strong>please contact Versara Support toll-free at 855-397-3392</strong>.
+        </p>
+        <br/>
+        <p>
+            <strong>Please review the Truth-in-Lending Act (“TILA”) disclosures in your Loan Agreement for additional details.</strong>
+        </p>
+        <br/>
+        <br/>
+        <p style="font-size:9px">
+            <i><sup>1</sup>Covered borrower means a consumer who, at the time the consumer becomes obligated on a consumer credit transaction 
+            or establishes an account for consumer credit, is a covered member or a dependent of a covered member. The term ‘‘covered member’’ 
+            means a member of the armed forces who is serving on: (i) Active duty pursuant to title 10, title 14, or title 32, 
+            United States Code; (ii) under a call or order that does not specify a period of 30 days or fewer; or, (iii) Active Guard 
+            and Reserve duty, as that term is defined in 10 U.S.C. 101(d)(6). The term ‘‘dependent’’ with respect to a covered member 
+            means a person described in subparagraph (A), (D), (E), or (I) of 10 U.S.C. 1072(2). Covered borrower does not mean a consumer 
+            who (though a covered borrower at the time he or she became obligated on a consumer credit transaction or established an 
+            account for consumer credit) no longer is a covered member or a dependent of a covered member. If you have questions regarding 
+            your coverage under the Military Lending Act, please refer all inquiries to the Defense Manpower Data Center (DMDC) here.</i>
+        </p>
+    </body>
+    <br/> <br/>
+    {!lendingApplnWrapper.lendingAppln.Name} <br/>
+    {!lendingApplnWrapper.borrowerEmail} <br/>
+    {!currentDate} <br/>
+    {!lendingApplnWrapper.userIpAddress} <br/>
+</apex:page>

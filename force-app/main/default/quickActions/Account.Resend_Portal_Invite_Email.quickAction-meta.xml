@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Resend Portal Invite Email</description>
+    <fieldOverrides>
+        <field>DNL_Re_send_Portal_Invite_Date__c</field>
+        <formula>NOW()</formula>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>Person_Email__c</field>
+        <formula>Account.PersonContact.Email</formula>
+    </fieldOverrides>
+    <fieldOverrides>
+        <field>Resend_Portal_Invite_Email__c</field>
+        <formula>True</formula>
+    </fieldOverrides>
+    <label>DNL Resend Portal Invite</label>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <quickActionLayout>
+        <layoutSectionStyle>TwoColumnsLeftToRight</layoutSectionStyle>
+        <quickActionLayoutColumns>
+            <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
+                <field>Person_Email__c</field>
+                <uiBehavior>Readonly</uiBehavior>
+            </quickActionLayoutItems>
+        </quickActionLayoutColumns>
+        <quickActionLayoutColumns/>
+    </quickActionLayout>
+    <type>Update</type>
+</QuickAction>

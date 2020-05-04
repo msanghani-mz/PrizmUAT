@@ -1,0 +1,13 @@
+.THIS {
+}
+.THIS.cmp-header{
+    border-bottom: 2px solid rgb(221, 219, 218);
+    padding-top: 0.25rem;
+    padding-bottom: 0.75rem;
+    text-align: center;    
+}
+.THIS.cmp-footer{
+    border-top: 2px solid rgb(221, 219, 218);
+    padding-top: 0.75rem;
+    text-align: center;
+}

@@ -1,0 +1,11 @@
+<!--
+ -- Page   : MLADisclosureDocumentPage
+ --
+ -- Author : Financial Spectra
+ -->
+<apex:page standardController="fsCore__Lending_Application__c" extensions="MLADisclosureDocumentController" applyHtmlTag="true" renderAs="pdf">
+    <body>
+        <apex:outputText value="{!mMlaDisclosureContent}" escape="false"></apex:outputText>
+    </body>
+    
+</apex:page>

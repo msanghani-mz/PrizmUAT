@@ -1,0 +1,538 @@
+<apex:page renderAs="pdf"  controller="ClientPortal_DNLHomeSummaryPageCntrl"
+           applyHtmlTag="false" 
+           showHeader="false" 
+           cache="true"
+           readOnly="true">
+    <html>
+        <head>
+            <style>
+                .title-css{
+                    text-align: center;
+                    font-weight: 700;
+                    line-height: 1.25;
+                	margin:5px;
+                    box-sizing: border-box;
+                    font-family: Quattrocento-Sans-Regular;
+                }
+                td{
+                	width: 10%;
+                }
+                .pdf-content-css {
+                    font-family: Quattrocento-Sans-Regular;
+                    padding: 5px;
+                    border-radius: 2px;
+                    color: #000000!important;
+                    border: 1px solid #d4d4d4;
+                }
+                .section-header {
+                    padding: 5px;
+                    background: rgb(224, 224, 224);
+                    background-clip: padding-box;
+                    box-shadow: none;
+                	font-size:18px;
+                    border: 1px solid rgba(0, 0, 0, 0);
+                }
+                .left-padding-small{
+                    padding-left: 5px;
+                }
+
+            </style>
+        </head>
+        <body>
+            <div class="title-css">
+                <strong>Summary</strong>
+            </div>
+            <div class="pdf-content-css">
+                <div> <!-- Personal Information section-->
+                    <h1 class="section-header">Personal Information</h1>
+                    
+                    <table>
+                        <tr>
+                            <td>
+                                <span><b>First Name</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.FirstName}
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>Middle Name</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.MiddleName}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span><b>Last Name</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.LastName}
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>Date of Birth</b></span>
+                                <span class="left-padding-small">
+                                     
+                                    <apex:outputText value="{0,date,MM-dd-yyyy}">
+                                        <apex:param value="{!dnlIncomeWrapper.acc.PersonBirthdate}"/>
+                                    </apex:outputText>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span><b>SSN</b></span>
+                                <span class="left-padding-small">
+                                    {!maskedSSN}
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>U.S. Residency Status</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.U_S_Residency_Status__c}
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div> <!-- Identification section-->
+                    <h1 class="section-header">Identification</h1>
+                
+                    <table>
+                        <tr>
+                            <td>
+                                <span><b>Type</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.Primary_Id_Type__c}
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>Expiration Date</b></span>
+                                <span class="left-padding-small">
+                                    <apex:outputText value="{0,date,MM-dd-yyyy}">
+                                        <apex:param value="{!dnlIncomeWrapper.acc.Primary_Id_Expiration_Date__c}"/>
+                                    </apex:outputText>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span><b>Number</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.Primary_Id_Number__c}
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>State</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.Primary_Id_State__c}
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div> <!-- Housing Information section-->
+                    <h1 class="section-header">Housing Information</h1>
+                
+                    <table>
+                        <tr>
+                            <td>
+                                <span><b>Street</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.PersonOtherStreet}
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>Apt</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.Person_Other_Appartment__c}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span><b>City</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.PersonOtherCity}
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>Zip</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.PersonOtherPostalCode}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span><b>State</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.PersonOtherState}
+                                </span>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span><b>Have you lived here 2 years or less?</b></span>
+                                <span class="left-padding-small">
+                                    <apex:outputField value="{!dnlIncomeWrapper.acc.Lived_in_Home_Address_2_Year_or_Less__c}"/>
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>Is Mailing address different?</b></span>
+                                <span class="left-padding-small">
+                                    <apex:outputField value="{!dnlIncomeWrapper.acc.Is_Mailing_Home_Address_Different__c}"/>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span><b>Monthly Rent/ Mortgage Payment</b></span>
+                                <span class="left-padding-small">
+                                    {!dnlIncomeWrapper.acc.Monthly_Mortgage_or_Rent_Payment__c}
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>Housing Type</b></span>
+                                <span class="left-padding-small">
+                                    <apex:outputField value="{!dnlIncomeWrapper.acc.Housing_Type__c}"/>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <apex:outputPanel rendered="{!IF(dnlIncomeWrapper.acc.Lived_in_Home_Address_2_Year_or_Less__c == 'Yes', true, false)}">
+                    <div> <!-- Housing Information - Previous Address section-->
+                        <h1 class="section-header">Housing Information - Previous Address</h1>
+                    
+                        <table>
+                            <tr>
+                                <td>
+                                    <span><b>Street</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.Less_than_2yrs_Street_Address__c}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span><b>Apt</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.Less_than_2yrs_Apt_Num__c}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span><b>City</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.Less_than_2yrs_City__c}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span><b>Zip</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.Less_than_2yrs_Zip_Code__c}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span><b>State</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.Less_than_2yrs_State__c}
+                                    </span>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!IF(dnlIncomeWrapper.acc.Is_Mailing_Home_Address_Different__c , true, false)}">
+                    <div> <!-- Housing Information - Mailing Address-->
+                        <h1 class="section-header">Housing Information - Mailing Address</h1>
+                    
+                        <table>
+                            <tr>
+                                <td>
+                                    <span><b>Street</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.PersonMailingStreet}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span><b>Apt</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.PersonMailing_Apt__c}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span><b>City</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.PersonMailingCity}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span><b>Zip</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.PersonMailingPostalCode}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span><b>State</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.PersonMailingState}
+                                    </span>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!IF(dnlIncomeWrapper.acc.PersonOtherState == 'Wisconsin' , true, false)}">
+                    <div> <!-- Additional Information-->
+                        <h1 class="section-header">Additional Information</h1>
+                    
+                        <table>
+                            <tr>
+                                <td>
+                                    <span><b>Marital Status</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.Marital_Status__c}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span><b>Spouse Name</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.Spouse_Name__c}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span><b>Spouse Address</b></span>
+                                    <span class="left-padding-small">
+                                        {!dnlIncomeWrapper.acc.Spouse_Address__c}
+                                    </span>
+                                </td>
+                                <td>
+                                    
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </apex:outputPanel>
+				
+            </div>
+
+            <div class="pdf-content-css">
+                
+                <div> <!-- Income Information section-->
+                    <h1 class="section-header">Income Information</h1>
+                
+                    <table>
+                        <tr>
+                            <td>
+                                <span><b>Income Type</b></span>
+                                <span class="left-padding-small">
+                                    {!summaryWrapper.incomeType}
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>Annual Income</b></span>
+                                <span class="left-padding-small">
+                                   $ {!summaryWrapper.statedAmount}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span><b>Income Start Date</b></span>
+                                <span class="left-padding-small">
+                                    <apex:outputText value="{0,date,MM-dd-yyyy}">
+                                        <apex:param value="{!summaryWrapper.startDate}"/>
+                                    </apex:outputText>
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>Have you worked here less than 1 year?</b></span>
+                                <span class="left-padding-small">
+                                     {!summaryWrapper.lessThan1Year}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span><b>Employer</b></span>
+                                <span class="left-padding-small">
+                                    {!summaryWrapper.employmentName}
+                                </span>
+                            </td>
+                            <td>
+                                <span><b>Occupation</b></span>
+                                <span class="left-padding-small">
+                                     {!summaryWrapper.employmentTitle}
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+				<br/>
+                
+                <apex:outputPanel rendered="{!IF(summaryWrapper.lessThan1Year == 'Yes', true, false)}">
+                    <div> <!-- Previous Employer-->
+                        <h1 class="section-header">Previous Employer</h1>
+                    
+                        <table>
+                            <tr>
+                                <td>
+                                    <span><b>Previous Employer</b></span>
+                                    <span class="left-padding-small">
+                                        {!prevEmploymentDetails.employmerName}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span><b>Income Start Date</b></span>
+                                    <span class="left-padding-small">
+                                        <apex:outputText value="{0,date,MM-dd-yyyy}">
+                                            <apex:param value="{!prevEmploymentDetails.startDate}"/>
+                                        </apex:outputText>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span><b>Income End Date</b></span>
+                                    <span class="left-padding-small">
+                                        <apex:outputText value="{0,date,MM-dd-yyyy}">
+                                            <apex:param value="{!prevEmploymentDetails.endDate}"/>
+                                        </apex:outputText>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span><b>Street Address</b></span>
+                                    <span class="left-padding-small">
+                                        {!prevEmploymentDetails.street}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span><b>City</b></span>
+                                    <span class="left-padding-small">
+                                        {!prevEmploymentDetails.city}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span><b>State</b></span>
+                                    <span class="left-padding-small">
+                                        {!prevEmploymentDetails.state}
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br/>
+                </apex:outputPanel>
+                
+                <div> <!-- Additioanl infor block -->
+                    <apex:variable value="{!1}" var="rowNum"/>
+
+                    <apex:repeat value="{!additionalIncomeList}" var="additionalIncome">
+                        
+                        <h1 class="section-header">Additional Income <span><apex:outputText value="{!FLOOR(rowNum)}"/></span></h1>
+
+                        <apex:variable var="rowNum" value="{!rowNum + 1}"/>
+
+                        <table>
+                            <tr>
+                                <td>
+                                    <span><b>Income Type</b></span>
+                                    <span class="left-padding-small">
+                                        {!additionalIncome.incomeType}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span><b>Annual Income</b></span>
+                                    <span class="left-padding-small">
+                                        $ {!additionalIncome.statedAmount}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span><b>Income Start Date</b></span>
+                                    <span class="left-padding-small">
+                                        <apex:outputText value="{0,date,MM-dd-yyyy}">
+                                            <apex:param value="{!additionalIncome.startDate}"/>
+                                        </apex:outputText>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span><b>Employer</b></span>
+                                    <span class="left-padding-small">
+                                        {!additionalIncome.employmentName}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span><b>Occupation</b></span>
+                                    <span class="left-padding-small">
+                                        {!additionalIncome.employmentTitle}
+                                    </span>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:repeat>
+                </div>
+
+            </div>
+
+            <div class="pdf-content-css">
+                <div >
+                        <strong>
+                            I authorize Versara Lending, LLC (referred to as “Versara”) and its affiliates to check
+                            my credit history. Versara may obtain my credit bureau report and financial information
+                            from you for updates, renewals or extensions of any credit granted. Upon request,
+                            Versara will inform me if a credit report has been obtained and will give me the name
+                            and address of the agency furnishing the report. I understand and agree that my account
+                            will be subject to and governed by a Loan Agreement and Disclosure or Loan Note
+                            furnished to me and that I will be personally liable for all loans made pursuant to the
+                            Account Agreement and Disclosure or Loan Note. I further understand that pursuant to the
+                            terms of the Loan Agreement and Disclosure or Loan Note, any disputes between us
+                            concerning the account I have opened or concerning my other Versara accounts will be
+                            resolved by binding arbitration. If this is a joint application for credit, we
+                            understand that each of us will be jointly and individually liable for any debt
+                            on the account incurred by any applicant. By signing below, I confirm that the
+                            information I have given you is true and accurate to the best of my knowledge.
+                            I am applying for the credit account/loan specified on page 1 of this application.
+                            <br/>
+                            <br/>
+                            <b>Sharing Information:</b> By signing below, I consent to Versara’s disclosure of
+                            information used by Versara in its credit decision about me to any other applicant.
+                        </strong>
+                    </div>
+            </div>
+        </body>
+        <br/> <br/>
+        <div class="signed-by">
+            <strong> Electronically signed by: </strong>
+        </div> <br/> 
+        {!userName} <br/>
+        {!userEmail} <br/>
+        {!currentDate} <br/>
+        {!userIpAddress} <br/>
+    </html>
+</apex:page>

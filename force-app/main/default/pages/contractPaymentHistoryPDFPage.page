@@ -1,0 +1,77 @@
+<apex:page id="contractPaymentHistoryPDFPage" standardController="fsServ__Lending_Contract__c" 
+           extensions="PaymentHistoryPDFController" tabStyle="fsServ__Lending_Contract__c"
+           showHeader="false" sidebar="false" renderAs="pdf" applyHtmlTag="false" applyBodyTag="false"
+           title="{!mContract.Name} - Payment History Details">  
+
+    <head>
+        <title>{!mContract.Name} - Payment History Details</title>
+        
+        <apex:composition template="fsCore__pdfTemplatePage">
+            <apex:define name="pdfHeader"></apex:define>
+            <apex:define name="pdfFooter"></apex:define>
+            
+            <!-- Title -->
+            <apex:define name="pageTitle">
+                <span class="pdf-doc-title"><strong>Payment History Details</strong></span><br/><br/>
+            </apex:define>
+            
+            <!-- Sub-Title -->
+            <apex:define name="pageSubTitle">
+                <span class="pdf-doc-sub-title">{!$Label.fscore__pdf_reference_number_title} {!mContract.Name}</span><br/>
+            </apex:define>
+            
+            <!-- Contract Info -->
+            <apex:define name="recordInfo">
+                <table class="record-info-table">
+                    <tbody>
+                        <apex:repeat value="{!$ObjectType.fsServ__Lending_Contract__c.FieldSets.fsServ__Loan_PDF_Document_Fields}" var="contractField">
+                            <tr>
+                                <th width="40%">{!contractField.Label}</th>
+                                <td width="60%"><apex:outputField value="{!mContract[contractField.fieldPath]}"/></td>
+                            </tr>
+                        </apex:repeat>
+                    </tbody>
+                </table>
+            </apex:define>
+
+            <!-- Company Logo -->
+            <apex:define name="logo">
+                <img src="{!companyLogoURL}"/>
+            </apex:define>
+
+            <!-- Branch Info -->
+            <apex:define name="branchInfo">
+                <table class="record-info-table">
+                    <tbody>
+                        <apex:repeat value="{!$ObjectType.fsCore__Branch_Setup__c.FieldSets.fsCore__PDF_Document_Fields}" var="branchField">
+                            <tr><td align="right"><apex:outputField value="{!mBranch[branchField.fieldPath]}"/></td></tr>
+                        </apex:repeat>
+                    </tbody>
+                </table>
+            </apex:define>
+            
+            <apex:define name="relatedInfo"></apex:define>
+
+            <!-- Repayment Detail Table -->
+            <apex:define name="pdfContent">
+                <apex:dataTable id="iPaymentTable" value="{!mPaymentList}"
+                                var="pay" styleClass="pdf-content-table" rowClasses="odd-row,even-row">  
+
+                    <apex:repeat value="{!$ObjectType.fsServ__Inbound_Payment__c.FieldSets.PDF_Payment_History}"
+                                 var="payField">
+                        <apex:column headerValue="{!payField.Label}">
+                            <apex:outputField value="{!pay[payField.fieldPath]}"/>
+                        </apex:column>
+                    </apex:repeat>
+                </apex:dataTable>
+                
+                <div style="padding-top: 32px !important;">
+                    <div style="text-align: center;">
+                        <span>{!$Label.fsserv__end_of_records_title}</span>
+                    </div>
+                </div>
+            </apex:define>
+            
+        </apex:composition>
+    </head>
+</apex:page>

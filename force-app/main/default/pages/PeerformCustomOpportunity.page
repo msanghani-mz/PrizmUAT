@@ -1,0 +1,344 @@
+<apex:page standardController="Opportunity">
+    <apex:includeScript value="/apex/GlobalJS?core.apexpages.devmode.url=1"/>
+    <apex:includeScript value="{!$Resource.JQuery}"/>
+    <apex:includeScript value="{!$Resource.tools}" />
+    <apex:includeScript value="{!$Resource.PeerformJsApiClient}" />
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+    </script>
+    <style>
+        #loading{
+            padding-top: 2% !important;
+            padding-left: 40% !important;
+        }
+    </style>
+    <apex:form id="changeStatusForm">
+        <apex:pageBlock mode="edit" id="thePageBlock">
+            <apex:pageBlockSection columns="2">
+
+                <apex:pageblockSectionItem id="sectionItemUnBlock">
+                    <apex:commandButton value="UnBlock" id="btnUnblock" onclick="javascript: unblock(); return false;"/>
+                    <apex:commandButton value="Late Account Page" id="btnLateAcctLink" onclick="javascript: LateAcctLink(); return false;" rendered="{!$Profile.Name != 'PF Outsource User'}"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemFiller">
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="sectionItemManage" rendered="{!$Profile.Name != 'PF Outsource User'}">
+                    <apex:commandButton value="Manage Documents" id="btnManageDocs" onclick="javascript: manageDocs(); return false;"/>
+                    <apex:commandButton value="Payments" id="btnPayments" onclick="javascript: PaymentsLink(); return false;"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemHardPullAccept" rendered="{!$Profile.Name != 'PF Outsource User'}">
+                    <apex:commandButton action="{!save}" value="Hard Pull" id="btnHardPull" onclick="javascript: hardPull(); return false;" rendered="{!$Profile.Name != 'PF Outsource User'}"/>
+                    <apex:commandButton action="{!save}" value="Accept Opportunity" id="btnAccept" onclick="javascript: acceptOpportunity(); return false;" rendered="{!$Profile.Name != 'PF Outsource User'}"/>
+                </apex:pageblockSectionItem>
+
+                <apex:pageblockSectionItem id="sectionItemFillerLine">
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemFillerLine2">
+                </apex:pageblockSectionItem>
+
+                <!-- Regular Operators -->
+                <apex:pageblockSectionItem id="sectionItemCancelReason" rendered="{!$Profile.Name != 'PF Outsource User'}">
+                    <apex:outputLabel id="sectionItemCancelReason" value="Cancel Reason:" for="CancelReason"/>
+                    <apex:inputField id="CancelReason" value="{!Opportunity.Manual_Cancel_Picklist__c}" onchange="change();" />
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemCancelConfirm" rendered="{!$Profile.Name != 'PF Outsource User'}">
+                    <apex:commandButton action="{!save}" value="Cancel Loan" id="btnCancel" onclick="javascript: cancelOpportunity1(); return false;"/>
+                </apex:pageblockSectionItem>
+                
+                <!-- Outsorce only have 1 possible Cancel Reason -->
+                <apex:pageblockSectionItem id="sectionItemCancelReason2" rendered="{!$Profile.Name == 'PF Outsource User'}">
+                    <apex:commandButton action="{!save}" value="Cancel Loan" id="btnCancel2" onclick="javascript: cancelOpportunity2(); return false;"/>
+                    <apex:outputLabel id="CancelReason2" value="Cancel Reason: Withdrawn Application (Applicant Request)"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="sectionItemCancelConfirm2" rendered="{!$Profile.Name == 'PF Outsource User'}">
+                </apex:pageblockSectionItem>
+                
+                <script type="text/javascript">
+                    
+                    function unblock()
+                    {
+                        var confOk = confirm("Are you sure ?");
+                        if (confOk)
+                        {
+                            var key = '{!$User.Username}'.replace(".pfsandbox", "") + ":" + '{!$User.Peerform__c}';
+                            var loanId = '{!Opportunity.Loan_Id__c}';
+                            var OppId = '{!Opportunity.Id}';
+
+                            PeerformJsApiClient.Unblock(key, loanId, OppId);
+                        }
+                    }
+
+                    function LateAcctLink()
+                    {
+                        var adminEmail = calcMD5('{!$User.Username}');
+                        var SForceUrl = encodeURIComponent('{!$Api.Enterprise_Server_URL_250}');
+                        var sessionId = '{!$Api.Session_ID}';
+                        var loanId = '{!Opportunity.Loan_Id__c}';
+
+                        var url = getBaseUrl() + 'admin/salesforce/sforcela.ashx' 
+                            + '?aid=' + adminEmail
+                            + '&url=' + SForceUrl
+                            + '&sid=' + sessionId
+                            + '&loanId=' + loanId;
+
+                        window.open(url);
+                    }
+                    
+                    function PaymentsLink()
+                    {
+                        var adminEmail = calcMD5('{!$User.Username}');
+                        var SForceUrl = encodeURIComponent('{!$Api.Enterprise_Server_URL_250}');
+                        var sessionId = '{!$Api.Session_ID}';
+                        var loanId = '{!Opportunity.Loan_Id__c}';
+
+                        var url = getBaseUrl() + 'admin/operationborrower/borrowerpayments/' 
+                            + '?aid=' + adminEmail
+                            + '&url=' + SForceUrl
+                            + '&sid=' + sessionId
+                            + '&loanId=' + loanId;
+
+                        window.open(url);
+                    }
+
+                    function manageDocs()
+                    {
+                        var adminEmail = calcMD5('{!$User.Username}');
+                        var userId = '{!Opportunity.Account.UserId__c}';
+                        var loanId = '{!Opportunity.Loan_Id__c}';
+                        var SForceUrl = encodeURIComponent('{!$Api.Enterprise_Server_URL_250}');
+                        var sessionId = '{!$Api.Session_ID}';
+
+                        var url = getBaseUrl() + 'admin/salesforce/sforcemd/' 
+                            + '?aid=' + adminEmail 
+                            + '&uid=' + userId
+                            + '&lid=' + loanId
+                            + '&url=' + SForceUrl
+                            + '&sid=' + sessionId;
+
+                        window.open(url,'','height=768,width=1224,scrollbars=no,menubar=no,resizable=yes,toolbar=no,location=no,status=no');
+                    }
+
+                    function hardPull()
+                    {
+                        var confOk = confirm("Are you sure ?");
+                        if (confOk)
+                        {
+                            var key = '{!$User.Username}'.replace(".pfsandbox", "") + ":" + '{!$User.Peerform__c}';
+                            var loanId = '{!Opportunity.Loan_Id__c}';
+                            var OppId = '{!Opportunity.Id}';
+
+                            //PeerformJsApiClient.HardPull(key, loanId, OppId);
+                        }
+                    }
+
+                    function acceptOpportunity()
+                    {
+                        var confOk = confirm("Are you sure ?");
+                        if (confOk)
+                        {
+                            var key = '{!$User.Username}'.replace(".pfsandbox", "") + ":" + '{!$User.Peerform__c}'
+                            var loanId = '{!Opportunity.Loan_Id__c}';
+                            var OppId = '{!Opportunity.Id}';
+
+                            //PeerformJsApiClient.Accept(key, loanId, OppId);
+                        } 
+                    }
+                    
+                    function change()
+                    {
+                        var optionSelected = j$('#' + '{!$Component.sectionItemCancelReason}:CancelReason'.replace(/:/g, '\\:')).val();
+                        if (optionSelected == 'Manually Decline Application')
+                        {
+                            showReasons();
+                            j$('#' + '{!$Component.sectionItemCancelConfirm}:btnCancel'.replace(/:/g, '\\:')).hide();
+                        }
+                        else
+                        {
+                            hideReasons();
+                            j$('#' + '{!$Component.sectionItemCancelConfirm}:btnCancel'.replace(/:/g, '\\:')).show();
+                        }
+                    }
+                   
+                    function cancelOpportunity1()
+                    {
+                        var optionSelected = j$('#' + '{!$Component.sectionItemCancelReason}:CancelReason'.replace(/:/g, '\\:')).val();
+
+                        cancelOpportunity(optionSelected);
+                    }
+
+                    function cancelOpportunity2()
+                    {
+                        // This will need to be updated if the cancel reason text on our DB ever changes
+                        var optionSelected = 'Withdrawn Application (Applicant Request)';
+
+                        cancelOpportunity(optionSelected);
+                    }
+
+                    function cancelOpportunity(optionSelected)
+                    {
+                        if (optionSelected === '')
+                        {
+                            alert ('Please select a Cancel Reason');
+                        }
+                        else
+                        {
+                            var confOk = confirm("Are you sure you want to cancel this opportunity ?");
+                            if (confOk)
+                            {
+                                var key = '{!$User.Username}'.replace(".pfsandbox", "") + ":" + '{!$User.Peerform__c}'
+                                var loanId = '{!Opportunity.Loan_Id__c}';
+
+                                PeerformJsApiClient.CancelLoan(key, loanId, optionSelected, handler);
+                            }
+                        }
+                    }
+
+                    function handler(response) {
+                        if (response == null)
+                            window.top.location='/{!Opportunity.Id}';
+                        else
+                            alert ('Call to Peerform Failure, check the loan status in the Admin. Error message: ' + response);
+                    } 
+                </script>
+            </apex:pageBlockSection>
+            <hr />
+            <apex:pageBlockSection id="reasonSection" columns="2">
+                <apex:pageblockSectionItem id="reasons" >
+                    <apex:inputCheckbox id="reason1" title="Bankruptcy" />
+                    <apex:outputLabel value="Bankruptcy" />
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="reasons2" >
+                    <apex:inputCheckbox id="reason2" title="Collection action or judgement" />
+                    <apex:outputLabel value="Collection action or judgement" />
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="reasons3" >
+                    <apex:inputCheckbox id="reason3" title="Credit application incomplete" />
+                    <apex:outputLabel value="Credit application incomplete"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="reasons7" >
+                    <apex:inputCheckbox id="reason7" title="Delinquent past or present credit obligations with others" />
+                    <apex:outputLabel value="Delinquent past or present credit obligations with others"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="reasons8" >
+                    <apex:inputCheckbox id="reason8" title="Garnishment or attachment" />
+                    <apex:outputLabel value="Garnishment or attachment"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="reasons9" >
+                    <apex:inputCheckbox id="reason9" title="Length of employment" />
+                    <apex:outputLabel value="Length of employment"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="reasons4" >
+                    <apex:inputCheckbox id="reason4" title="Unable to verify employment" />
+                    <apex:outputLabel value="Unable to verify employment"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="reasons10" >
+                    <apex:inputCheckbox id="reason10" title="Temporary or irregular employment" />
+                    <apex:outputLabel value="Temporary or irregular employment"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="reasons5" >
+                    <apex:inputCheckbox id="reason5" title="Unable to verify income" />
+                    <apex:outputLabel value="Unable to verify income"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="reasons11" >
+                    <apex:inputCheckbox id="reason11" title="Temporary residence" />
+                    <apex:outputLabel value="Temporary residence"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem id="reasons6" >
+                    <apex:inputCheckbox id="reason6" title="Unable to verify residence" />
+                    <apex:outputLabel value="Unable to verify residence"/>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem >
+                    <apex:commandButton action="{!save}" value="Cancel Loan" id="btnCancel3" onclick="javascript: cancel3(); return false;"/>
+                </apex:pageblockSectionItem>   
+                
+                
+                <script type="text/javascript">
+                    (function () {
+                        hideReasons();
+                    })();
+                    function showReasons()
+                    {
+                        j$('#' + '{!$Component.reasonSection}'.replace(/:/g, '\\:')).show();
+                    }
+                    function hideReasons()
+                    {
+                        j$('#' + '{!$Component.reasonSection}'.replace(/:/g, '\\:')).hide();
+                    }
+                
+                    function cancel3()
+                    {
+                        var optionSelected = "";
+                        var ctr = 0;
+                        if (j$('#' + '{!$Component.reasons}:reason1'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons}:reason1'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        if (j$('#' + '{!$Component.reasons2}:reason2'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons2}:reason2'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        if (j$('#' + '{!$Component.reasons3}:reason3'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons3}:reason3'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        if (j$('#' + '{!$Component.reasons4}:reason4'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons4}:reason4'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        if (j$('#' + '{!$Component.reasons5}:reason5'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons5}:reason5'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        if (j$('#' + '{!$Component.reasons6}:reason6'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons6}:reason6'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        if (j$('#' + '{!$Component.reasons7}:reason7'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons7}:reason7'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        if (j$('#' + '{!$Component.reasons8}:reason8'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons8}:reason8'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        if (j$('#' + '{!$Component.reasons9}:reason9'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons9}:reason9'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        if (j$('#' + '{!$Component.reasons10}:reason10'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons10}:reason10'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        if (j$('#' + '{!$Component.reasons11}:reason11'.replace(/:/g, '\\:'))[0].checked)
+                        {
+                            optionSelected += j$('#' + '{!$Component.reasons11}:reason11'.replace(/:/g, '\\:'))[0].title + ':';
+                            ctr += 1;
+                        }
+                        
+                        if (ctr == 0 || ctr > 4)
+                        {
+                            alert("Please pick up to Four cancel reasons");
+                            return;
+                        }
+                        
+                        var key = '{!$User.Username}'.replace(".pfsandbox", "") + ":" + '{!$User.Peerform__c}'
+                        var loanId = '{!Opportunity.Loan_Id__c}';
+
+                        //PeerformJsApiClient.CancelLoan(key, loanId, optionSelected, handler);
+                    }
+                </script>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

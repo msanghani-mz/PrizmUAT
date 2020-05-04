@@ -1,0 +1,586 @@
+<!--
+@Page Name          : manageItemizationsCustomPage.page
+@Description        : 
+@Author             : ChangeMeIn@UserSettingsUnder.SFDoc
+@Group              : 
+@Last Modified By   : ChangeMeIn@UserSettingsUnder.SFDoc
+@Last Modified On   : 12/17/2019, 11:14:09 PM
+@Modification Log   : 
+==============================================================================
+Ver         Date                     Author                 Modification
+==============================================================================
+1.0    8/2/2019, 7:09:47 AM   ChangeMeIn@UserSettingsUnder.SFDoc     Initial Version
+-->
+<apex:page id="manageItemizationsCustomPage" standardController="fsCore__Lending_Application__c" 
+           extensions="ManageItemizationsCustomController" tabStyle="fsCore__Lending_Application__c"
+           sidebar="false" showHeader="false" lightningStylesheets="true" docType="html-5.0"
+           title="{!mApplication.Name} : {!$Label.fscore__manage_itemizations_title}" applyHtmlTag="false">  
+    
+    <head>
+        <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+        <apex:slds />
+        <apex:stylesheet value="{!URLFOR($Resource.fsCore__fs_style, 'fs-style.css')}"/>
+        <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" />
+        <script src="{!URLFOR($Resource.fsCore__fs_svg, 'svg4everybody.js')}"/>
+        <script>var $j = jQuery.noConflict();</script>
+    </head>
+    
+    <fsCore:collapsibleHeaderCSS />
+    <style>
+        .disb-date .dateFormat{
+        display: none;
+        }
+    </style>
+    <script type='text/javascript'>
+    //ON ENTER KEY PRESS DO NOT NAVIGATE THE PAGE
+    function noenter(ev)  {
+        if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    </script>    
+    
+    <body>
+        <div class="slds-scope">
+            <apex:form id="itemizationForm" styleClass="fs-data-form slds-form--stacked slds-m-horizontal_x-small" rendered="{!$ObjectType.fsCore__Lending_Application__c.accessible}">
+                
+                <div class="slds-page-header slds-page-header_record-home">
+                    <div class="slds-page-header__row">
+                        <div class="slds-page-header__col-title">
+                            <div class="slds-media">
+                                <div class="slds-media__figure slds-align-middle">
+                                    <fsCore:svgIcon iconStyleClass="slds-icon slds-icon_medium  slds-icon-standard-apps"
+                                                    iconPath="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#hierarchy')}"/>
+                                </div>
+                                <div class="slds-media__body">
+                                    <div class="slds-page-header__name">
+                                        <div class="slds-page-header__name-title">
+                                            <h1>
+                                                <span>{!$Label.fscore__manage_itemizations_title}</span>
+                                                <span class="slds-page-header__title slds-truncate" >{!mApplication.Name}</span>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-page-header__col-actions">
+                            <div class="slds-page-header__controls">                   
+                                
+                                <div class="slds-page-header__control">
+                                            <apex:commandButton action="{!tilaDashboard}"
+                                                                value="TILA Dashboard" 
+                                                                status="waitActionStatus"
+                                                                reRender="messagePanel"
+                                                                rendered="{!pageOpenedFromTILA}"
+                                                                styleClass="slds-button slds-button_neutral"/>     
+                                            <apex:commandButton action="{!cancel}" value="Cancel" immediate="true"
+                                                                styleClass="slds-button slds-button_neutral"/>  
+                                            <apex:commandButton action="{!onSaveItemizationsButton}" value="Save" 
+                                                                status="waitActionStatus"
+                                                                reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel"
+                                                                styleClass="slds-button slds-button_brand"/>  
+                                            <apex:commandButton action="{!onApplyItemizationsButton}" value="Apply" 
+                                                                status="waitActionStatus"
+                                                                reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel"
+                                                                styleClass="slds-button slds-button_brand"/>  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-page-header__row slds-page-header__row_gutters">
+                        <div class="slds-page-header__col-details">
+                            <ul class="slds-page-header__detail-row">
+                                <li class="slds-page-header__detail-block">
+                                    <div class="slds-text-title slds-truncate" >Applicant Name</div>
+                                    <div class="slds-truncate" >{!mApplication.fsCore__Title__c}</div>
+                                </li>
+                                <li class="slds-page-header__detail-block">
+                                    <div class="slds-text-title slds-truncate" >{!$ObjectType.fsCore__Lending_Application__c.Fields.Underwriter__c.Label}</div>
+                                    <div class="slds-truncate" title="Description that demonstrates truncation with a long text field.">{!mApplication.Underwriter__c}</div>
+                                </li>
+                                <li class="slds-page-header__detail-block">
+                                    <div class="slds-text-title slds-truncate" title="Field 4">{!$ObjectType.fsCore__Lending_Application__c.Fields.Loan_Officer__c.Label}</div>
+                                    <div class="slds-truncate" >{!mApplication.Loan_Officer__r.firstName}&nbsp;{!mApplication.Loan_Officer__r.lastName}</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>                    
+                
+                <apex:outputPanel id="messagePanel" styleClass="fs-message-panel">
+                    <apex:pageMessages ></apex:pageMessages>
+                </apex:outputPanel>
+                
+                <apex:actionStatus id="waitActionStatus">
+                    <apex:facet name="start">
+                        <fsCore:fsSpinner spinnerSize="medium"/>
+                    </apex:facet>
+                </apex:actionStatus>
+                
+                <div class="slds-container_fluid slds-m-vertical_small">
+                    <fsCore:pageMessage messageTitle="{!$Label.fscore__invalid_access}" 
+                                        messageDetail="{!$Label.fscore__manage_itemizations_invalid_access_message}" 
+                                        rendered="{!ISBLANK(mApplication.Id)}"
+                                        backgroundTheme="default"
+                                        iconTheme="slds-icon-text-error"
+                                        iconType="assets/icons/utility-sprite/svg/symbols.svg#ban"/>
+                    
+                    <apex:outputPanel id="manageItemizationsPanel" layout="block" rendered="{!NOT(ISBLANK(mApplication.Id))}">
+                        <apex:pageBlock id="manageItemizationBlock" mode="maindetail" html-class="fs-data-block">
+                            
+                            <apex:outputPanel layout="block" styleClass="slds-grid slds-grid_align-spread">
+                                <div class="slds-col">
+                                    <span class="slds-text-heading_medium">{!$Label.fscore__edit_itemization_section_title}</span>
+                                </div>
+                            </apex:outputPanel>
+                            
+                            <apex:outputPanel layout="block" styleclass="slds-m-vertical_small" rendered="{!ISBLANK(mApplication.fsCore__Contract_Template_Name__c)}">
+                                <fsCore:sectionMessage messageType="warning" messageText="{!$Label.fscore__contract_template_not_applied_message}" messageTheme="slds-theme_warning"/>
+                            </apex:outputPanel>                                    
+                            
+                            <!-- Itemized Amounts -->
+                            <apex:outputPanel id="itemizedAmountPanel" layout="block" styleClass="slds-m-top_small">
+                                <apex:outputPanel layout="block" styleclass="slds-grid slds-grid_pull-padded-small">
+                                    
+                                    <apex:outputPanel layout="block" styleclass="slds-col slds-p-horizontal_small">
+                                        <apex:outputPanel layout="block" styleClass="slds-grid slds-grid_align-spread fs-edit-section-header">
+                                            <apex:outputPanel layout="block" styleClass="slds-col slds-align-middle">
+                                                <h3 class="slds-text-heading_small">Approved Itemized Amounts</h3>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                        
+                                        <apex:outputPanel layout="block" styleclass="slds-grid slds-wrap slds-m-horizontal_x-small">
+                                            <apex:outputPanel layout="block" styleclass="slds-p-around_x-small slds-size_1-of-1 slds-truncate">
+                                                <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                    <span class="slds-truncate">{!$ObjectType.fsCore__Lending_Application__c.Fields.fsCore__Financed_Amount__c.Label}</span>
+                                                </p>
+                                                <apex:outputText value="{0, number, ###,###,###,###,##0.00}">
+                                                    <apex:param value="{!mApprovedFinancedAmount}"/>
+                                                </apex:outputText>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel layout="block" styleclass="slds-p-around_x-small slds-size_1-of-1 slds-truncate">
+                                                <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                    <span class="slds-truncate">{!$ObjectType.fsCore__Lending_Application__c.Fields.fsCore__Finance_Fee__c.Label}</span>
+                                                </p>
+                                                <apex:outputText value="{0, number, ###,###,###,###,##0.00}">
+                                                    <apex:param value="{!mApprovedFinanceFee}"/>
+                                                </apex:outputText>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel layout="block" styleclass="slds-p-around_x-small slds-size_1-of-1 slds-truncate">
+                                                <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                    <span class="slds-truncate">{!$ObjectType.fsCore__Lending_Application__c.Fields.fsCore__Prepaid_Fee__c.Label}</span>
+                                                </p>
+                                                <apex:outputText value="{0, number, ###,###,###,###,##0.00}">
+                                                    <apex:param value="{!mApprovedPrepaidFee}"/>
+                                                </apex:outputText>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                    
+                                    <apex:outputPanel layout="block" styleclass="slds-col slds-p-horizontal_small">
+                                        <apex:outputPanel layout="block" styleClass="slds-grid slds-grid_align-spread fs-edit-section-header">
+                                            <apex:outputPanel layout="block" styleClass="slds-col slds-align-middle">
+                                                <h3 class="slds-text-heading_small">Actual Itemized Amounts</h3>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                        
+                                        <apex:outputPanel layout="block" styleclass="slds-grid slds-wrap slds-m-horizontal_x-small">
+                                            <apex:outputPanel layout="block" styleclass="slds-p-around_x-small slds-size_1-of-1 slds-truncate">
+                                                <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                    <span class="slds-truncate">{!$ObjectType.fsCore__Lending_Application__c.Fields.fsCore__Financed_Amount__c.Label}</span>
+                                                </p>
+                                                <apex:outputText value="{0, number, ###,###,###,###,##0.00}">
+                                                    <apex:param value="{!mActualFinancedAmount}"/>
+                                                </apex:outputText>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel layout="block" styleclass="slds-p-around_x-small slds-size_1-of-1 slds-truncate">
+                                                <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                    <span class="slds-truncate">{!$ObjectType.fsCore__Lending_Application__c.Fields.fsCore__Finance_Fee__c.Label}</span>
+                                                </p>
+                                                <apex:outputText value="{0, number, ###,###,###,###,##0.00}">
+                                                    <apex:param value="{!mActualFinanceFee}"/>
+                                                </apex:outputText>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel layout="block" styleclass="slds-p-around_x-small slds-size_1-of-1 slds-truncate">
+                                                <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                    <span class="slds-truncate">{!$ObjectType.fsCore__Lending_Application__c.Fields.fsCore__Prepaid_Fee__c.Label}</span>
+                                                </p>
+                                                <apex:outputText value="{0, number, ###,###,###,###,##0.00}">
+                                                    <apex:param value="{!mActualPrepaidFee}"/>
+                                                </apex:outputText>
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                    
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+                            
+                            <!-- Itemizations -->
+                            <apex:outputPanel layout="block" styleclass="slds-m-top_large">
+                                <apex:outputPanel layout="block" styleClass="slds-grid slds-grid_align-spread fs-edit-section-header">
+                                    <apex:outputPanel layout="block" styleClass="slds-col slds-align-middle">
+                                        <h3 class="slds-text-heading_small">{!$Label.fscore__itemization_section_title}</h3>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel id="iItemizationButtonPanel" layout="block" styleClass="slds-col slds-no-flex slds-align-middle">
+                                        <apex:commandLink action="{!onCalculateAll}" value="{!$Label.fscore__calculate_button}"
+                                                          reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel" 
+                                                          title="{!$Label.fscore__calculate_all_itemization_button_toolip}"
+                                                          status="waitActionStatus"
+                                                          styleClass="fs-small-button--brand"
+                                                          style="color: #ffffff !important; padding: 3px 5px 4px !important;"/>&nbsp;
+                                        
+                                        <apex:commandLink action="{!onAddItemization}"
+                                                          rendered="{!AND(mIsManualItmzAllowed, $ObjectType.fsCore__Lending_Application_Itemization__c.createable)}"
+                                                          reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel" 
+                                                          title="{!$Label.fscore__add_itemization_tooltip}"
+                                                          status="addItmzStatus"
+                                                          style="color: #ffffff !important;align-self: center;" 
+                                                          type="image/png">
+                                            <apex:actionStatus id="addItmzStatus">
+                                                <apex:facet name="start">
+                                                    <apex:image value="{!URLFOR($Resource.fsCore__fs_slds,'/assets/images/spinners/slds_spinner_inverse.gif')}"
+                                                                styleClass="fs-small-button--brand" height="24px" width="24px" 
+                                                                style="padding: 2px !important;" />
+                                                </apex:facet>
+                                                <apex:facet name="stop">
+                                                    <apex:image value="{!URLFOR($Resource.fsCore__fs_slds, 'assets/icons/action/new_60.png')}"
+                                                                styleClass="fs-small-button--brand" height="24px" width="24px" 
+                                                                style="padding: 2px !important;" />
+                                                </apex:facet>
+                                            </apex:actionStatus>
+                                        </apex:commandLink>
+                                    </apex:outputPanel>
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel id="itemizationContentPanel" layout="block" styleClass="slds-m-top_small">
+                                    <div class="slds-m-horizontal_x-small slds-scrollable_x">
+                                        <apex:dataTable id="itemizationEntryTable" value="{!mItemizationObjectList}" var="itmzObj" 
+                                                        rendered="{!(mItemizationObjectList.size > 0)}" rowClasses="slds-align-top"
+                                                        styleClass="slds-table slds-table_bordered">
+                                            
+                                            <apex:column >
+                                                <apex:facet name="header">
+                                                    <span class="slds-text-title_caps slds-truncate">
+                                                        {!$ObjectType.fsCore__Lending_Application_Itemization__c.Fields.fsCore__Itemization_Name__c.Label}
+                                                    </span>
+                                                </apex:facet>
+                                                
+                                                <p class="slds-text-body_small slds-text-color_weak slds-p-around_xx-small"
+                                                   title="{!$ObjectType.fsCore__Lending_Application_Itemization__c.Fields.fsCore__Itemization_Family__c.Label}">
+                                                    <apex:outputPanel rendered="{!(itmzObj.IsNew)}">Select an Itemization</apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!NOT(itmzObj.IsNew)}">{!itmzObj.itemization.fsCore__Itemization_Family__c}</apex:outputPanel>
+                                                </p>
+                                                <apex:outputPanel styleClass="slds-p-horizontal_xx-small">
+                                                    <apex:outputPanel rendered="{!(itmzObj.IsNew)}">
+                                                        <apex:selectList value="{!itmzObj.itemization.fsCore__Itemization_Name__c}" rendered="{!itmzObj.IsNew}"
+                                                                         multiselect="false" size="1" style="width: 80% !important;">
+                                                            <apex:selectOptions value="{!itmzObj.itemizationSelectList}"/>
+                                                            <apex:actionSupport action="{!onSelectItemization}" event="onchange" 
+                                                                                status="waitActionStatus" reRender="itemizedAmountPanel,itemizationContentPanel">
+                                                                <apex:param name="recNumber" assignTo="{!mSelectedRecordNumber}" value="{!itmzObj.recordNumber}"/>
+                                                            </apex:actionSupport>
+                                                        </apex:selectList>
+                                                        <apex:outputText style="font-weight: 600;">({!itmzObj.itemization.fsCore__Plus_Or_Minus__c})</apex:outputText>
+                                                    </apex:outputPanel>
+                                                    
+                                                    <apex:outputPanel rendered="{!NOT(itmzObj.IsNew)}">
+                                                        <apex:outputLink target="_blank" value="/{!URLFOR(itmzObj.Itemization.id)}" style="font-weight: 600;">{!itmzObj.itemizationName}</apex:outputLink>
+                                                        &nbsp;
+                                                        <apex:outputLink target="_blank" value="/{!URLFOR(itmzObj.Itemization.id)}" style="font-weight: 600;">({!itmzObj.itemization.fsCore__Plus_Or_Minus__c}) </apex:outputLink>
+                                                        <br/>
+                                                        <br/>
+                                                        <apex:outputPanel rendered="{!(itmzObj.itemization.Tradeline_Name__c != null)}">
+                                                            <span class="slds-text-title slds-truncate">
+                                                                {!$ObjectType.Opportunity_Tradelines_Offer__c.Fields.Current_Stage__c.Label}:
+                                                            </span>
+                                                            <apex:outputText style="font-weight: 600;">{!itmzObj.itemization.Tradeline_Name__r.Current_Stage__c}</apex:outputText>
+                                                            <br/>
+                                                            <span class="slds-text-title slds-truncate">
+                                                                {!$ObjectType.Opportunity_Tradelines_Offer__c .Fields.Litigation_Stage__c.Label}:
+                                                            </span>
+                                                            <apex:outputText style="font-weight: 600;">{!itmzObj.itemization.Tradeline_Name__r.Litigation_Stage__c}</apex:outputText>
+                                                        </apex:outputPanel>
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                                
+                                                <apex:inputField value="{!itmzObj.itemization.fsCore__Itemization_Family__c}" style="display:none;" onkeypress="return noenter(event);"/>
+                                            </apex:column>
+                                            
+                                            <apex:column >
+                                                <apex:facet name="header">
+                                                    <span class="slds-text-title_caps slds-truncate">Creditor</span>
+                                                </apex:facet>
+                                                <apex:outputPanel layout="block" id="creditorPanel" styleClass="slds-grid slds-wrap">
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-truncate"
+                                                                      rendered="{!AND(itmzObj.isFinancedAmountType, itmzObj.isCreditorNameDisplayedType)}">      
+                                                        <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                            <span class="slds-truncate">{!$ObjectType.fsCore__Lending_Application_Itemization__c.Fields.Original_Creditor__c.Label}</span>
+                                                        </p>
+                                                        <apex:outputField value="{!itmzObj.itemization.Original_Creditor__c}"/>&nbsp;
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-truncate" 
+                                                                      rendered="{!AND(itmzObj.isFinancedAmountType, itmzObj.isCreditorNameDisplayedType)}">
+                                                        <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                            <span class="slds-truncate">{!$ObjectType.fsCore__Lending_Application_Itemization__c.Fields.Current_Creditor__c.Label}</span>
+                                                        </p>
+                                                        
+                                                        <!--<apex:inputText list="{!itmzObj.mCurrentCreditorLov}"/>-->
+                                                        <apex:inputField value="{!itmzObj.itemization.Current_Creditor__c}" list="{!itmzObj.mCurrentCreditorLov}" onkeypress="return noenter(event);">
+                                                            
+                                                            <apex:actionSupport action="{!onChangeOfCurrentCreditor}" event="onchange" 
+                                                                                status="waitActionStatus" 
+                                                                                reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel">
+                                                                <apex:param name="recNumber" assignTo="{!mSelectedRecordNumber}" value="{!itmzObj.recordNumber}"/>
+                                                            </apex:actionSupport>
+                                                        </apex:inputField>&nbsp;
+                                                    </apex:outputPanel> 
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-truncate" 
+                                                                      rendered="{!OR(!itmzObj.isFinancedAmountType, !itmzObj.isCreditorNameDisplayedType)}">
+                                                        &nbsp;
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                            </apex:column> 
+                                            
+                                            <apex:column >
+                                                <apex:facet name="header">
+                                                    <span class="slds-text-title_caps slds-truncate"></span>
+                                                </apex:facet>
+                                                <apex:outputPanel layout="block" id="itemizationReadOnlyAmountPanel" styleClass="slds-grid slds-wrap">
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-truncate"
+                                                                      rendered="{!AND(itmzObj.isFinancedAmountType, itmzObj.isCreditorNameDisplayedType)}"> 
+                                                        <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                            <span class="slds-truncate">{!$ObjectType.fsCore__Lending_Application_Itemization__c.Fields.DNL_Original_Enrolled_Balance__c.Label}</span>
+                                                        </p>
+                                                        <apex:outputField value="{!itmzObj.itemization.DNL_Original_Enrolled_Balance__c}"/>
+                                                    </apex:outputPanel>                                            
+                                                    
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-truncate"
+                                                                      rendered="{!itmzObj.isFinancedAmountType}">      
+                                                        <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                            <span class="slds-truncate">Current Balance</span>
+                                                        </p>
+                                                        <apex:inputField value="{!itmzObj.itemization.fsCore__Requested_Amount_Unsigned__c}" onkeypress="return noenter(event);">
+                                                            <apex:actionSupport action="{!onChangeCurrentBalanceAmount}" event="onchange" 
+                                                                                status="waitActionStatus" 
+                                                                                reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel">
+                                                                <apex:param name="recNumber" assignTo="{!mSelectedRecordNumber}" value="{!itmzObj.recordNumber}"/>
+                                                            </apex:actionSupport>
+                                                        </apex:inputField>
+                                                    </apex:outputPanel>
+                                                    
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-truncate"
+                                                                      rendered="{!NOT(itmzObj.isFinancedAmountType)}">
+                                                        <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                            <span class="slds-truncate">Select a Fee</span>
+                                                        </p>
+                                                        <apex:outputPanel >
+                                                            <apex:selectList multiselect="false" size="1"
+                                                                             value="{!itmzObj.itemization.fsCore__Fee_Name__c}"
+                                                                             style="width: 80% !important;">
+                                                                <apex:selectOptions value="{!itmzObj.feeSelectList}"/>
+                                                                <apex:actionSupport event="onchange" action="{!onSelectFee}" status="waitActionStatus"
+                                                                                    reRender="messagePanel,itemizationContentPanel">
+                                                                    <apex:param name="recNumber" assignTo="{!mSelectedRecordNumber}" value="{!itmzObj.recordNumber}"/>
+                                                                </apex:actionSupport>
+                                                            </apex:selectList>&nbsp;
+                                                            
+                                                            <apex:commandLink action="{!onCalculateFee}"
+                                                                              reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel" 
+                                                                              title="{!$Label.fscore__calculate_itemization_button_toolip}"
+                                                                              status="waitActionStatus"
+                                                                              style="align-self: center;" 
+                                                                              type="image/png">
+                                                                <apex:image value="{!URLFOR($Resource.fsCore__fs_slds, 'assets/icons/utility/rotate_60.png')}"
+                                                                            styleClass="fs-small-button--neutral" height="28px" width="28px" style="padding: 4px !important;"/>
+                                                                <apex:param name="recNumber" assignTo="{!mSelectedRecordNumber}" value="{!itmzObj.recordNumber}"/>
+                                                            </apex:commandLink>
+                                                        </apex:outputPanel>
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                            </apex:column>
+                                            
+                                            <!-- Estimates --> 
+                                            <apex:column >
+                                                <apex:facet name="header">
+                                                    <span class="slds-text-title_caps slds-truncate">Estimates</span>
+                                                </apex:facet>
+                                                <apex:outputPanel layout="block" id="itemizationEstimateAmountPanel" styleClass="slds-grid slds-wrap">
+                                                    <!-- Estimated_Settlement_Percent__c -->
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-large-size_1-of-2">
+                                                        
+                                                        <apex:outputPanel rendered="{!AND(AND(itmzObj.isFinancedAmountType, $Permission.fsCore__Allow_Access_to_Edit_Approved_Amounts),itmzObj.isCreditorNameDisplayedType)}">
+                                                            <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                                <span class="slds-truncate">Settlement %</span>
+                                                            </p>
+                                                            <apex:inputField value="{!itmzObj.itemization.Estimated_Settlement_Percent__c}" style="width: 100% !important;"
+                                                                             rendered="{!$Permission.fsCore__Allow_Access_to_Edit_Approved_Amounts}" onkeypress="return noenter(event);">
+                                                                <apex:actionSupport action="{!onChangeSettlementApprovedPercent}" event="onchange" status="waitActionStatus"
+                                                                                    reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel">
+                                                                    <apex:param name="recNumber" assignTo="{!mSelectedRecordNumber}" value="{!itmzObj.recordNumber}" />
+                                                                </apex:actionSupport>
+                                                            </apex:inputField>
+                                                        </apex:outputPanel>
+                                                    </apex:outputPanel>                                                    
+                                                    
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-large-size_1-of-2">
+                                                        <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                            <span class="slds-truncate">Amount</span>
+                                                        </p>
+                                                        
+                                                        <apex:outputPanel rendered="{!($Permission.fsCore__Allow_Access_to_Edit_Approved_Amounts)}">
+                                                            <apex:outputPanel rendered="{!itmzObj.isFinancedAmountType}">
+                                                                <apex:inputField value="{!itmzObj.itemization.fsCore__Approved_Amount_Unsigned__c}" style="width: 100% !important;"
+                                                                                 rendered="{!$Permission.fsCore__Allow_Access_to_Edit_Approved_Amounts}" onkeypress="return noenter(event);">
+                                                                    <apex:actionSupport action="{!onChangeSettlementApprovedAmount}" event="onchange" 
+                                                                                        status="waitActionStatus" 
+                                                                                        reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel">
+                                                                        <apex:param name="recNumber" assignTo="{!mSelectedRecordNumber}" value="{!itmzObj.recordNumber}"/>
+                                                                    </apex:actionSupport>
+                                                                </apex:inputField>
+                                                            </apex:outputPanel>
+                                                            
+                                                            <apex:outputPanel rendered="{!NOT(itmzObj.isFinancedAmountType)}">
+                                                                <apex:inputField value="{!itmzObj.itemization.fsCore__Approved_Amount_Unsigned__c}" style="width: 100% !important;"
+                                                                                 rendered="{!itmzObj.itemization.fsCore__Is_Override_Allowed__c}" onkeypress="return noenter(event);"/>
+                                                                <apex:inputField value="{!itmzObj.itemization.fsCore__Approved_Amount_Unsigned__c}" style="width: 100% !important; background-color: #eaecef !important;"
+                                                                                 html-disabled="true" rendered="{!NOT(itmzObj.itemization.fsCore__Is_Override_Allowed__c)}" onkeypress="return noenter(event);" />&nbsp;
+                                                            </apex:outputPanel>
+                                                        </apex:outputPanel>
+                                                        
+                                                        <apex:outputPanel rendered="{!NOT($Permission.fsCore__Allow_Access_to_Edit_Approved_Amounts)}">
+                                                            <apex:outputField value="{!itmzObj.itemization.fsCore__Approved_Amount_Unsigned__c}" />
+                                                        </apex:outputPanel>
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                            </apex:column>
+                                            
+                                            <!-- Actual -->
+                                            <apex:column >
+                                                <apex:facet name="header">
+                                                    <span class="slds-text-title_caps slds-truncate">Actuals</span>
+                                                </apex:facet>
+                                                <apex:outputPanel layout="block" id="itemizationActualAmountPanel" styleClass="slds-grid slds-wrap">
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-large-size_1-of-2">
+                                                        <apex:outputPanel rendered="{!AND(AND(itmzObj.isFinancedAmountType,$Permission.Allow_Access_To_Edit_Actual_Amounts),itmzObj.isCreditorNameDisplayedType)}">
+                                                            <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                                <span class="slds-truncate">Settlement %</span>
+                                                            </p>
+                                                            
+                                                            <!-- /PDI-625 MAKING FIELD DISABLED -->
+                                                            <apex:inputField value="{!itmzObj.itemization.Actual_Settlement_Percentage__c}" style="width: 100% !important; background-color: #eaecef !important;"
+                                                                             html-disabled="true" rendered="{!NOT(itmzObj.itemization.fsCore__Is_Override_Allowed__c)}" onkeypress="return noenter(event);">
+                                                                <apex:actionSupport action="{!onChangeSettlementActualPercent}" event="onchange" status="waitActionStatus"
+                                                                                    reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel">
+                                                                    <apex:param name="recNumber" assignTo="{!mSelectedRecordNumber}" value="{!itmzObj.recordNumber}"/>
+                                                                </apex:actionSupport>
+                                                            </apex:inputField>
+                                                        </apex:outputPanel>
+                                                    </apex:outputPanel>
+                                                    
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-large-size_1-of-2">
+                                                        <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                            <span class="slds-truncate">Amount</span>
+                                                        </p>
+                                                        
+                                                        <apex:outputPanel rendered="{!($Permission.Allow_Access_To_Edit_Actual_Amounts)}">
+                                                            <apex:outputPanel rendered="{!itmzObj.isFinancedAmountType}">
+                                                                <apex:inputField value="{!itmzObj.itemization.fsCore__Actual_Amount_Unsigned__c}" style="width: 100% !important;" onkeypress="return noenter(event);">
+                                                                    <apex:actionSupport action="{!onChangeSettlementActualAmount}" event="onchange" 
+                                                                                        status="waitActionStatus" 
+                                                                                        reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel">
+                                                                        <apex:param name="recNumber" assignTo="{!mSelectedRecordNumber}" value="{!itmzObj.recordNumber}"/>
+                                                                    </apex:actionSupport>
+                                                                </apex:inputField>
+                                                            </apex:outputPanel>
+                                                            
+                                                            <apex:outputPanel rendered="{!NOT(itmzObj.isFinancedAmountType)}">
+                                                                <apex:inputField value="{!itmzObj.itemization.fsCore__Actual_Amount_Unsigned__c}" style="width: 100% !important;"
+                                                                                 rendered="{!itmzObj.itemization.fsCore__Is_Override_Allowed__c}" onkeypress="return noenter(event);"/>
+                                                                <apex:inputField value="{!itmzObj.itemization.fsCore__Actual_Amount_Unsigned__c}" style="width: 100% !important; background-color: #eaecef !important;"
+                                                                                 html-disabled="true" rendered="{!NOT(itmzObj.itemization.fsCore__Is_Override_Allowed__c)}" onkeypress="return noenter(event);"/>&nbsp;
+                                                            </apex:outputPanel>
+                                                        </apex:outputPanel>
+                                                        
+                                                        <apex:outputPanel rendered="{!NOT($Permission.Allow_Access_To_Edit_Actual_Amounts)}">
+                                                            <apex:outputField value="{!itmzObj.itemization.fsCore__Actual_Amount_Unsigned__c}" />
+                                                        </apex:outputPanel>
+                                                        
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                            </apex:column>
+                                            
+                                            <apex:column >
+                                                <apex:facet name="header">
+                                                    <span class="slds-text-title_caps slds-truncate"></span>
+                                                </apex:facet>
+                                                <apex:outputPanel layout="block" id="dibusrsementDatePanel" styleClass="slds-grid slds-wrap">
+                                                    <apex:outputPanel layout="block" styleClass="slds-p-around_xx-small slds-size_1-of-1 slds-truncate disb-date"
+                                                                      rendered="{!AND(itmzObj.isFinancedAmountType,itmzObj.isCreditorNameDisplayedType)}">
+                                                        <p class="slds-text-body_small slds-text-color_weak slds-p-bottom_xx-small">
+                                                            <span class="slds-truncate">Disbursement Date</span>
+                                                        </p>
+                                                        
+                                                        <!--<apex:inputField value="{!itmzObj.itemization.Disbursement_Date__c}" style="width: 100% !important;" onkeypress="return noenter(event);"/>-->
+                                                        <apex:inputField value="{!itmzObj.itemization.Disbursement_Date__c}" style="width: auto !important;" />
+                                                    </apex:outputPanel>
+                                                </apex:outputPanel>
+                                            </apex:column>
+                                            <!-- Notes -->
+                                            <apex:column width="8%">
+                                                <apex:facet name="header">
+                                                    <span class="slds-text-title_caps slds-truncate">Notes</span>
+                                                </apex:facet>
+                                                <apex:inputTextarea value="{!itmzObj.itemization.Notes__c}" rows="5"  style="width: 100% !important;" onkeypress="return noenter(event);"/>    
+                                            </apex:column>                                            
+                                            
+                                            <apex:column width="3%" styleClass="slds-align-middle">
+                                                <apex:facet name="header"></apex:facet>
+                                                <div class="slds-float_right">
+                                                    <apex:commandLink action="{!onDeleteItemization}"
+                                                                      reRender="messagePanel,itemizedAmountPanel,itemizationContentPanel"
+                                                                      title="{!$Label.fscore__delete_button_tooltip}"
+                                                                      status="deleteItmzStatus"
+                                                                      style="align-self: center;"
+                                                                      type="image/png">
+                                                        <apex:actionStatus id="deleteItmzStatus">
+                                                            <apex:facet name="start">
+                                                                <apex:image value="{!URLFOR($Resource.fsCore__fs_slds,'/assets/images/spinners/slds_spinner_brand.gif')}"
+                                                                            styleClass="fs-action-icon--delete" height="28px" width="28px" style="padding: 4px !important;" />
+                                                            </apex:facet>
+                                                            <apex:facet name="stop">
+                                                                <apex:image value="{!URLFOR($Resource.fsCore__fs_slds, 'assets/icons/utility/close_60.png')}"
+                                                                            styleClass="fs-action-icon--delete" height="28px" width="28px" style="padding: 4px !important;" />
+                                                            </apex:facet>
+                                                        </apex:actionStatus>
+                                                        <apex:param name="deleteRec" assignTo="{!mSelectedRecordNumber}" value="{!itmzObj.recordNumber}"/>
+                                                    </apex:commandLink>
+                                                </div>
+                                            </apex:column>
+                                        </apex:dataTable>
+                                    </div>
+                                    
+                                    <apex:outputPanel rendered="{!(mItemizationObjectList.size == 0)}" layout="block" styleClass="slds-box slds-box_small">
+                                        <div class="slds-align_absolute-center">
+                                            <span class="slds-text-body_regular">{!$Label.fscore__no_record_to_display}</span>
+                                        </div>
+                                    </apex:outputPanel>
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+                            <!-- / Itemizations -->
+                        </apex:pageBlock>
+                    </apex:outputPanel>
+                </div>
+            </apex:form>
+            <!-- / Wizard Step Body -->
+            
+            <!-- Footer -->
+            <fsCore:fsCopyright pageTitle="{!mApplication.Name} - {!$Label.fscore__manage_itemizations_title}"/>
+            <!-- / Footer -->
+            
+        </div>
+    </body>
+    
+</apex:page>

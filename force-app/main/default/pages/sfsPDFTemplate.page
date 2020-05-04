@@ -1,0 +1,168 @@
+<apex:page id="sfsPDFTemplate" controller="SFSPDFControllerBase"
+           showHeader="false" sidebar="false" 
+           applyHtmlTag="false" applyBodyTag="false">
+    
+    <style type="text/css" media="print">
+        @page {
+        margin: 50px;
+        
+        @top-left {
+        content: element(header);
+        }
+        @bottom-left {
+        content: element(footer);
+        }
+        }
+        div.pdf-doc-header {
+        font-family: proxima-nova, sans-serif;
+        font-size:10px;
+        position: running(header); 
+        }
+        div.pdf-doc-footer {
+        font-family: proxima-nova, sans-serif;
+        font-size: 10px;
+        display: block;
+        position: running(footer);
+        }
+        .page-number:before {
+        content: counter(page);
+        }
+        .page-count:before {
+        content: counter(pages);
+        }
+        div.pdf-doc{
+        font-family: proxima-nova, sans-serif;
+        font-size: 12px !important;
+        color: #4d4d4d !important;
+        }
+        div.pdf-align-center {
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+        margin: auto;
+        }
+        div.pdf-left-panel{
+        width: 50%;
+        float: left;
+        text-align: left;
+        }
+        div.pdf-right-panel{
+        width: 50%;
+        float: right;
+        text-align: right;
+        }
+        div.pdf-content-panel{
+        float: left;
+        margin-top: 32px;
+        width: 100%;
+        }
+        .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+        }
+        .pdf-doc-title{
+        font-size: 24px !important;
+        vertical-align: top;
+        margin-bottom: 6px;
+        }
+        .pdf-doc-sub-title{
+        font-size: 16px !important;
+        margin-bottom: 6px;
+        }
+        .pdf-doc-section-title{
+        font-size: 13px !important;
+        margin-top: 6px;
+        margin-bottom: 6px;
+        }
+        
+        /* CSS for record info table */
+        table.record-info-table {
+        border: 0;
+        width:100%;
+        }
+        table.record-info-table th {
+        font-size: 11px !important;
+        font-weight: bold !important;
+        border: 0;
+        padding: 2px;
+        }
+        table.record-info-table td {
+        border: 0;
+        padding: 1px;
+        }
+        
+        /* CSS for content table */
+        table.pdf-content-table {
+        border: 0;
+        width:100%;
+        }
+        table.pdf-content-table tr:nth-child(even){
+        background-color: #f4f6f9;
+        }
+        table.pdf-content-table tr:nth-child(odd){
+        background-color: #ffffff;
+        }
+        table.pdf-content-table th {
+        font-size: 11px !important;
+        font-weight: bold !important;
+        border-top: 0.25px solid;
+        border-bottom: 0.25px solid;
+        padding: 5px;
+        }
+        table.pdf-content-table td {
+        border: 0;
+        padding: 5px;
+        }
+        .hide-content{
+        display: none;
+        }
+        .even-row {
+        background-color:#f4f6f9;
+        }
+        .odd-row {
+        background-color:#ffffff;
+        }
+    </style>
+    
+    <!-- Header -->
+    <div class="pdf-doc-header">
+        <apex:insert name="pdfHeader" />
+    </div>
+    <!-- / Header -->
+    
+    <!-- Footer -->
+    <div class="pdf-doc-footer">
+        <apex:insert name="pdfFooter" />
+        <div style="float: right;">
+            <span class="page-number"/> {!$Label.fsCore__Page_of_Title} <span class="page-count"/>
+        </div>
+    </div>
+    <!-- Footer -->
+    
+    <!-- Document -->
+    <div class="pdf-doc">
+        <div id="pdfPageTitlePanel">
+            <div class="pdf-align-center">
+                
+                <apex:insert name="logo"/>
+                
+            </div>
+        </div>
+        
+        <div id="pdfRecordDetailPanel">
+            <div class="pdf-content-panel">
+                <apex:insert name="recordInfo"/>
+                
+            </div>
+        </div>
+        
+        <div class="pdf-content-panel">
+            <apex:insert name="pdfContent"/>
+        </div>
+    </div>
+    <!-- / Document -->
+    
+</apex:page>
